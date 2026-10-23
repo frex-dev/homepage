@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="FantomX — tools, resources, guides, and independent work.">
+
+  <title>FantomX — Official Website</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="FantomX home">
+      FantomX<span class="brand-dot">.</span>
+    </a>
+
+    <nav class="navigation" aria-label="Main navigation">
+      <a href="#explore">Explore</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">
+          <span class="status-dot"></span>
+          INDEPENDENT WORK & RESOURCES
+        </p>
+
+        <h1>
+          Built with purpose.<br>
+          <span>Made to be useful.</span>
+        </h1>
+
+        <p class="hero-description">
+          A collection of tools, resources, guides, and things
+          built through curiosity and experimentation.
+        </p>
+
+        <a class="primary-button" href="#explore">
+          Explore <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="hero-mark" aria-hidden="true">
+        FX<span>.</span>
+      </div>
+    </section>
+
+    <section class="explore-section" id="explore">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">THE COLLECTION</p>
+          <h2>Explore</h2>
+        </div>
+        <p class="section-note">Select a destination to continue.</p>
+      </div>
+
+      <div class="destination-grid">
+        <a
+          class="destination-card"
+          href="https://tools.fantomx.workers.dev/"
+        >
+          <div class="card-top">
+            <span class="card-icon" aria-hidden="true">01</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <h3>FantomTools</h3>
+          <p>Web utilities designed to make everyday tasks simpler.</p>
+          <span class="card-footer">Open tools</span>
+        </a>
+
+        <a
+          class="destination-card"
+          href="https://resources.fantomx.com/"
+        >
+          <div class="card-top">
+            <span class="card-icon" aria-hidden="true">02</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <h3>MMC Resources</h3>
+          <p>Resources, assets, and files for Mini Militia Classic.</p>
+          <span class="card-footer">Browse resources</span>
+        </a>
+
+        <a
+          class="destination-card"
+          href="https://maps.fantomx.com/"
+        >
+          <div class="card-top">
+            <span class="card-icon" aria-hidden="true">03</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <h3>MMC Map Designing Walkthrough</h3>
+          <p>Guides and walkthroughs for designing MMC maps.</p>
+          <span class="card-footer">View walkthroughs</span>
+        </a>
+
+        <button
+          class="destination-card destination-button"
+          id="vemana-open"
+          type="button"
+        >
+          <span class="card-top">
+            <span class="card-icon" aria-hidden="true">04</span>
+            <span class="card-arrow" aria-hidden="true">↗</span>
+          </span>
+          <h3>Vemana</h3>
+          <p>A separate space for selected work and materials.</p>
+          <span class="card-footer">Continue <span aria-hidden="true">→</span></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <p class="eyebrow">ABOUT</p>
+      <h2>One place. Different directions.</h2>
+      <p>
+        FantomX brings together useful tools, creative resources,
+        and independent work in one simple space.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="/">
+      FantomX<span class="brand-dot">.</span>
+    </a>
+    <p>Independent work. Built over time.</p>
+    <span>© <span id="current-year">2026</span> FantomX</span>
+  </footer>
+
+  <dialog class="password-dialog" id="vemana-dialog">
+    <form class="password-form" id="vemana-form">
+      <button
+        class="dialog-close"
+        id="vemana-close"
+        type="button"
+        aria-label="Close"
+      >×</button>
+
+      <p class="eyebrow">RESTRICTED ACCESS</p>
+      <h2>Continue to Vemana</h2>
+      <p class="dialog-description">
+        Enter the access password to continue.
+      </p>
+
+      <label for="vemana-password">Access password</label>
+      <input
+        id="vemana-password"
+        name="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="current-password"
+        required
+      >
+
+      <p class="form-error" id="password-error" role="alert" hidden>
+        Incorrect password. Please try again.
+      </p>
+
+      <button class="primary-button submit-button" type="submit">
+        Continue <span aria-hidden="true">→</span>
+      </button>
+    </form>
+  </dialog>
+</body>
+</html>

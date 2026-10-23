@@ -2,18 +2,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101114">
-  <meta name="description" content="Tools, resources, guides, and selected work.">
-  <title>Fantom-X</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111214">
+<title>Fantom-X</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #111214;
+  --panel: #18191c;
+  --border: #2c2e33;
+  --text: #f1f1f3;
+  --muted: #999ba4;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button { color: inherit; }
+.wrap { width: min(1000px, calc(100% - 40px)); margin: auto; }
+
+header {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.brand { font-size: 19px; font-weight: 700; letter-spacing: -.6px; }
+nav { display: flex; gap: 25px; }
+nav a { color: var(--muted); font-size: 13px; }
+nav a:hover { color: white; }
+
+.hero {
+  padding: 85px 0 76px;
+  border-bottom: 1px solid var(--border);
+}
+.eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 20px 0;
+  font-size: clamp(42px, 7vw, 68px);
+  letter-spacing: -3px;
+  line-height: 1.1;
+  font-weight: 650;
+}
+h1 span { color: #898c95; }
+.intro { max-width: 460px; color: var(--muted); font-size: 14px; }
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 11px 16px;
+  border: 1px solid #e5e5e8;
+  border-radius: 6px;
+  background: #e5e5e8;
+  color: #111214;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.button:hover { background: white; }
+
+.section { padding: 55px 0 65px; }
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 22px;
+  gap: 16px;
+}
+h2 { margin: 0; font-size: 27px; letter-spacing: -.8px; }
+.section-heading p:last-child { color: var(--muted); font-size: 12px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+.card {
+  width: 100%;
+  min-height: 200px;
+  padding: 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, transform .18s;
+}
+.card:hover {
+  background: #1d1f23;
+  border-color: #50525a;
+  transform: translateY(-2px);
+}
+.card-top { display: flex; justify-content: space-between; color: var(--muted); }
+.number { font-size: 10px; letter-spacing: 1px; }
+.arrow { font-size: 17px; }
+.card h3 { margin: 23px 0 7px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.card p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.card-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: #d0d1d6;
+  font-size: 11px;
+}
+
+.about { padding: 38px 0 55px; border-top: 1px solid var(--border); }
+.about h2 { font-size: 23px; }
+.about p:last-child { max-width: 520px; color: var(--muted); font-size: 13px; }
+
+footer {
+  min-height: 76px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Popup windows */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 75%);
+  backdrop-filter: blur(5px);
+}
+.overlay.open { display: flex; }
+.modal {
+  position: relative;
+  width: min(400px, 100%);
+  padding: 28px;
+  border: 1px solid #393b42;
+  border-radius: 12px;
+  background: #191a1e;
+  box-shadow: 0 24px 70px #0006;
+}
+.close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 25px;
+  cursor: pointer;
+}
+.modal h2 { margin-top: 12px; font-size: 23px; }
+.modal-copy { margin: 8px 0 22px; color: var(--muted); font-size: 13px; }
+label { display: block; margin-bottom: 7px; font-size: 12px; }
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #393b42;
+  border-radius: 6px;
+  background: #101114;
+  color: white;
+}
+.submit { width: 100%; }
+.error { color: #ff9b9b; font-size: 12px; }
+.error[hidden] { display: none; }
+
+@media (max-width: 600px) {
+  .wrap { width: calc(100% - 32px); }
+  header { height: 68px; }
+  nav { gap: 17px; }
+  .hero { padding: 65px 0; }
+  h1 { font-size: clamp(39px, 10vw, 51px); letter-spacing: -2px; }
+  .section { padding: 43px 0 50px; }
+  .section-heading { align-items: start; flex-direction: column; gap: 4px; }
+  .grid { grid-template-columns: 1fr; }
+  .card { min-height: 185px; }
+  footer { flex-wrap: wrap; padding: 18px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="Home">Fantom-X<span>.</span></a>
-    <nav aria-label="Main navigation">
+<div class="wrap">
+  <header>
+    <a class="brand" href="/">Fantom-X</a>
+    <nav>
       <a href="#explore">Explore</a>
       <a href="#about">About</a>
     </nav>
@@ -21,83 +218,145 @@
 
   <main>
     <section class="hero">
-      <p class="eyebrow">TOOLS · RESOURCES · GUIDES</p>
+      <p class="eyebrow">Tools · Resources · Guides</p>
       <h1>Useful things,<br><span>made with purpose.</span></h1>
-      <p class="hero-description">
-        A collection of tools, game resources, guides, and selected work.
+      <p class="intro">
+        A considered collection of tools, game resources, guides,
+        and selected work.
       </p>
-      <a class="primary-button" href="#explore">
-        Explore <span aria-hidden="true">↗</span>
-      </a>
+      <a class="button" href="#explore">Explore collection ↗</a>
     </section>
 
-    <section class="explore-section" id="explore">
+    <section class="section" id="explore">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">LINKS & RESOURCES</p>
+          <p class="eyebrow">Browse</p>
           <h2>Explore</h2>
         </div>
-        <p class="section-note">Choose a section to continue.</p>
+        <p>Choose a section to continue.</p>
       </div>
 
-      <div class="destination-grid">
-        <a class="destination-card"
-           href="https://tools.fantomx.workers.dev/">
-          <div class="card-top">
-            <span class="card-icon">01</span>
-            <span class="card-arrow">↗</span>
-          </div>
+      <div class="grid">
+        <a class="card" href="https://tools.fantomx.workers.dev/">
+          <div class="card-top"><span class="number">01</span><span class="arrow">↗</span></div>
           <h3>FantomTools</h3>
           <p>Simple web utilities for everyday tasks.</p>
-          <span class="card-footer">Open tools</span>
+          <span class="card-foot">Open tools</span>
         </a>
 
-        <a class="destination-card" href="/mods/">
-          <div class="card-top">
-            <span class="card-icon">02</span>
-            <span class="card-arrow">↗</span>
-          </div>
+        <button class="card" data-popup="construction" type="button">
+          <div class="card-top"><span class="number">02</span><span class="arrow">↗</span></div>
           <h3>MMC Resources</h3>
           <p>Mods, assets, and useful Mini Militia Classic files.</p>
-          <span class="card-footer">Browse resources</span>
-        </a>
+          <span class="card-foot">Under construction</span>
+        </button>
 
-        <a class="destination-card" href="/maps/">
-          <div class="card-top">
-            <span class="card-icon">03</span>
-            <span class="card-arrow">↗</span>
-          </div>
+        <button class="card" data-popup="construction" type="button">
+          <div class="card-top"><span class="number">03</span><span class="arrow">↗</span></div>
           <h3>MMC Map Designing Walkthrough</h3>
           <p>Map structure, tiles, objects, and design tutorials.</p>
-          <span class="card-footer">View walkthrough</span>
-        </a>
+          <span class="card-foot">Under construction</span>
+        </button>
 
-        <a class="destination-card" href="/vemana/">
-          <div class="card-top">
-            <span class="card-icon">04</span>
-            <span class="card-arrow">↗</span>
-          </div>
+        <button class="card" data-popup="vemana" type="button">
+          <div class="card-top"><span class="number">04</span><span class="arrow">↗</span></div>
           <h3>Vemana</h3>
           <p>A separate space for selected work and materials.</p>
-          <span class="card-footer">Continue</span>
-        </a>
+          <span class="card-foot">Continue →</span>
+        </button>
       </div>
     </section>
 
-    <section class="about-section" id="about">
-      <p class="eyebrow">ABOUT</p>
+    <section class="about" id="about">
+      <p class="eyebrow">About</p>
       <h2>A place for ongoing work.</h2>
-      <p>
-        A straightforward home for useful tools, shared resources,
-        and guides. More sections may be added over time.
-      </p>
+      <p>A straightforward home for useful tools, shared resources, and guides.</p>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <a class="brand footer-brand" href="/">Fantom-X<span>.</span></a>
-    <p>Tools, resources, and guides.</p>
-    <span>© <span id="current-year">2026</span></span>
+  <footer>
+    <span class="brand">Fantom-X</span>
+    <span>Tools, resources, and guides.</span>
+    <span>© <span id="year">2026</span></span>
   </footer>
+</div>
+
+<div class="overlay" id="construction-modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="close" data-close type="button" aria-label="Close">×</button>
+    <p class="eyebrow">Coming soon</p>
+    <h2>Under Construction</h2>
+    <p class="modal-copy">This section is being prepared. Please check back later.</p>
+    <button class="button" data-close type="button">Got it</button>
+  </div>
+</div>
+
+<div class="overlay" id="vemana-modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="close" data-close type="button" aria-label="Close">×</button>
+    <p class="eyebrow">Restricted access</p>
+    <h2>Continue to Vemana</h2>
+    <p class="modal-copy">Enter the access password to continue.</p>
+    <form id="vemana-form">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required placeholder="Enter password">
+      <p class="error" id="error" hidden>Incorrect password. Try again.</p>
+      <button class="button submit" type="submit">Continue →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const construction = document.getElementById("construction-modal");
+const vemana = document.getElementById("vemana-modal");
+const password = document.getElementById("password");
+const error = document.getElementById("error");
+
+document.querySelectorAll('[data-popup="construction"]').forEach(card => {
+  card.addEventListener("click", () => construction.classList.add("open"));
+});
+
+document.querySelector('[data-popup="vemana"]').addEventListener("click", () => {
+  password.value = "";
+  error.hidden = true;
+  vemana.classList.add("open");
+  password.focus();
+});
+
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => {
+    construction.classList.remove("open");
+    vemana.classList.remove("open");
+  });
+});
+
+[construction, vemana].forEach(modal => {
+  modal.addEventListener("click", event => {
+    if (event.target === modal) modal.classList.remove("open");
+  });
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    construction.classList.remove("open");
+    vemana.classList.remove("open");
+  }
+});
+
+document.getElementById("vemana-form").addEventListener("submit", event => {
+  event.preventDefault();
+
+  // DEMO ONLY: client-side passwords are visible in page source.
+  // Use Cloudflare Access or server-side authentication for real privacy.
+  if (password.value === "vemanapass") {
+    window.location.href = "/vemana/";
+  } else {
+    error.hidden = false;
+    password.select();
+  }
+});
+</script>
 </body>
 </html>

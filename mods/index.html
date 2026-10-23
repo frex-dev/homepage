@@ -2,798 +2,620 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090b10">
-
-  <title>MMC Mods — Mini Militia Classic Themes | Fantom-X</title>
-  <meta name="description" content="Browse Mini Militia Classic theme mods, custom graphics, skins, backgrounds and visual modifications for Android and iOS.">
-  <meta name="keywords" content="Mini Militia Classic mods, MMC mods, MMC theme mod, Mini Militia themes, MMC iOS mod, Fantom-X">
-  <meta property="og:title" content="MMC Mods — Mini Militia Classic">
-  <meta property="og:description" content="Explore custom Mini Militia Classic themes and visual mods for Android and iOS.">
-  <meta property="og:type" content="website">
-
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #090b10;
-      --panel: rgba(14, 17, 24, .88);
-      --panel-hover: rgba(22, 26, 35, .96);
-      --border: rgba(255, 255, 255, .11);
-      --text: #f3f4f6;
-      --muted: #a0a6b3;
-      --accent: #c2f579;
-      --accent-dark: #141b0d;
-      --warning: #ffd48a;
-    }
-
-    * { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--text);
-      background-color: var(--bg);
-      background-image: url("./bgMoon_new.png");
-      background-position: center top;
-      background-size: cover;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
-      background-position: center top;
-      background-size: cover;
-      background-attachment: fixed;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    button { font: inherit; }
-
-    button:focus-visible,
-    a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 4px;
-    }
-
-    .wrap {
-      width: min(1120px, calc(100% - 40px));
-      margin: 0 auto;
-    }
-
-    /* Navigation */
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(8, 10, 15, .83);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .nav {
-      min-height: 70px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .brand {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -.8px;
-    }
-
-    .brand span { color: var(--accent); }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .nav-links a:hover { color: var(--accent); }
-
-    /* Hero */
-
-    .hero {
-      padding: 76px 0 38px;
-      max-width: 800px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      color: var(--accent);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .eyebrow::before {
-      content: "";
-      width: 19px;
-      height: 1px;
-      background: currentColor;
-    }
-
-    h1 {
-      margin: 18px 0 14px;
-      font-size: clamp(38px, 7vw, 68px);
-      font-weight: 780;
-      letter-spacing: -2.8px;
-      line-height: 1.04;
-    }
-
-    h1 span { color: var(--accent); }
-
-    .hero-copy {
-      max-width: 590px;
-      margin: 0;
-      color: #c0c5cf;
-      font-size: 14px;
-      line-height: 1.9;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 25px;
-    }
-
-    .button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      min-height: 43px;
-      padding: 11px 17px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 750;
-      transition: transform .18s, background .18s, border-color .18s;
-    }
-
-    .button:hover { transform: translateY(-2px); }
-
-    .button-primary {
-      color: #11170b;
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .button-primary:hover { background: #d4ff98; }
-
-    .button-secondary {
-      background: rgba(15, 18, 25, .7);
-    }
-
-    .button-secondary:hover {
-      background: rgba(35, 40, 51, .9);
-      border-color: rgba(255,255,255,.25);
-    }
-
-    /* Stats */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      max-width: 620px;
-      margin-top: 38px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(9, 12, 18, .68);
-      backdrop-filter: blur(12px);
-    }
-
-    .stat {
-      padding: 15px 18px;
-    }
-
-    .stat + .stat { border-left: 1px solid var(--border); }
-
-    .stat strong {
-      display: block;
-      font-size: 23px;
-      letter-spacing: -.7px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    /* Sections */
-
-    .section {
-      padding: 44px 0 22px;
-      scroll-margin-top: 85px;
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 18px;
-      margin-bottom: 19px;
-    }
-
-    .section-heading h2 {
-      margin: 8px 0 0;
-      font-size: clamp(22px, 4vw, 30px);
-      letter-spacing: -.9px;
-      line-height: 1.2;
-    }
-
-    .section-description {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .section-count {
-      color: var(--muted);
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 15px;
-    }
-
-    .card {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      padding: 21px;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      background: var(--panel);
-      box-shadow: 0 12px 35px rgba(0,0,0,.12);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      transition: transform .2s, background .2s, border-color .2s;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      background: var(--panel-hover);
-      border-color: rgba(194,245,121,.35);
-    }
-
-    .card.featured {
-      border-color: rgba(194,245,121,.32);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 17px;
-    }
-
-    .release-label {
-      color: var(--accent);
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    .version-tag {
-      padding: 4px 8px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      color: #c8cbd3;
-      font-size: 10px;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 13px;
-    }
-
-    .tag {
-      padding: 4px 7px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 5px;
-      color: #c7ccd5;
-      background: rgba(255,255,255,.035);
-      font-size: 9px;
-      font-weight: 750;
-      letter-spacing: .45px;
-      text-transform: uppercase;
-    }
-
-    .tag.highlight {
-      color: var(--accent);
-      border-color: rgba(194,245,121,.25);
-      background: rgba(194,245,121,.07);
-    }
-
-    .tag.paid {
-      color: var(--warning);
-      border-color: rgba(255,212,138,.25);
-      background: rgba(255,212,138,.06);
-    }
-
-    .card h3 {
-      margin: 0 0 9px;
-      font-size: 17px;
-      font-weight: 750;
-      letter-spacing: -.35px;
-      line-height: 1.4;
-    }
-
-    .description {
-      margin: 0 0 19px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.8;
-    }
-
-    .credits {
-      margin: auto 0 14px;
-      color: #c3c8d2;
-      font-size: 11px;
-    }
-
-    .warning {
-      margin: 0 0 16px;
-      padding: 10px 11px;
-      border: 1px solid rgba(255,190,90,.24);
-      border-radius: 8px;
-      background: rgba(90,55,15,.22);
-      color: var(--warning);
-      font-size: 11px;
-      line-height: 1.65;
-    }
-
-    .download {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      width: 100%;
-      min-height: 42px;
-      margin-top: auto;
-      padding: 10px 12px;
-      border: 1px solid rgba(194,245,121,.32);
-      border-radius: 8px;
-      background: rgba(194,245,121,.09);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 800;
-      text-align: center;
-      transition: background .18s, color .18s;
-    }
-
-    .download:hover {
-      background: var(--accent);
-      color: #11170b;
-    }
-
-    /* Separate iOS section */
-
-    .ios-panel {
-      margin-top: 16px;
-      padding: 20px;
-      border: 1px solid rgba(125,166,255,.22);
-      border-radius: 13px;
-      background: rgba(15,20,33,.83);
-    }
-
-    .ios-heading {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .ios-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      border: 1px solid rgba(125,166,255,.23);
-      border-radius: 11px;
-      background: rgba(125,166,255,.08);
-      color: #a9c4ff;
-      font-size: 19px;
-    }
-
-    .ios-heading h3 {
-      margin: 0;
-      font-size: 17px;
-    }
-
-    .ios-heading p {
-      margin: 3px 0 0;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .ios-card {
-      max-width: 440px;
-      border-color: rgba(125,166,255,.24);
-    }
-
-    .ios-card .download {
-      color: #b4caff;
-      border-color: rgba(125,166,255,.3);
-      background: rgba(125,166,255,.08);
-    }
-
-    .ios-card .download:hover {
-      background: #b4caff;
-      color: #101626;
-    }
-
-    /* Footer */
-
-    .notice {
-      margin: 38px 0 50px;
-      padding: 16px 18px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: rgba(10,12,17,.76);
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.8;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      background: rgba(7,9,14,.75);
-    }
-
-    .footer-inner {
-      min-height: 78px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .footer-inner .brand { color: var(--text); }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width: 600px) {
-      body { background-attachment: scroll; }
-
-      .wrap { width: calc(100% - 30px); }
-
-      .nav { min-height: 64px; }
-
-      .nav-links { gap: 14px; font-size: 11px; }
-
-      .hero { padding: 52px 0 25px; }
-
-      h1 {
-        font-size: clamp(37px, 11vw, 52px);
-        letter-spacing: -1.9px;
-      }
-
-      .hero-copy { font-size: 13px; }
-
-      .stats { margin-top: 28px; }
-
-      .stat { padding: 12px 10px; }
-
-      .stat strong { font-size: 20px; }
-
-      .stat span { font-size: 9px; }
-
-      .section { padding-top: 36px; }
-
-      .section-heading { align-items: start; }
-
-      .grid { grid-template-columns: 1fr; }
-
-      .card { padding: 19px; }
-
-      .ios-panel { padding: 15px; }
-
-      .footer-inner {
-        padding: 18px 0;
-        flex-wrap: wrap;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { transition: none !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080b12">
+<title>MMC Mods | Fantom-X</title>
+
+<style>
+:root {
+  --bg: #080b12;
+  --panel: rgba(15, 20, 31, .78);
+  --panel-hover: rgba(25, 32, 47, .92);
+  --border: rgba(255,255,255,.11);
+  --text: #f1f4fb;
+  --muted: #9ba6ba;
+  --accent: #a78bfa;
+  --accent-2: #67e8f9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image: url("./bgMoon_new.png");
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, select {
+  font: inherit;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(18px, 5vw, 72px);
+  background: rgba(8, 11, 18, .84);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.brand {
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.brand span {
+  color: var(--accent);
+}
+
+.back-link {
+  color: var(--muted);
+  font-size: .9rem;
+  transition: color .2s;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+main {
+  width: min(1120px, 92%);
+  margin: 0 auto;
+  padding: 66px 0 72px;
+}
+
+.hero {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--accent-2);
+  font-size: .76rem;
+  font-weight: 750;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 2px;
+  background: var(--accent-2);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -2px;
+}
+
+h1 span {
+  color: var(--accent);
+}
+
+.hero p {
+  max-width: 640px;
+  margin: 18px 0 0;
+  color: #c0c8d7;
+  font-size: 1rem;
+}
+
+.note {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  margin: 28px 0 36px;
+  padding: 17px 19px;
+  border: 1px solid rgba(103, 232, 249, .2);
+  border-radius: 14px;
+  background: rgba(8, 18, 27, .72);
+}
+
+.note-icon {
+  font-size: 1.15rem;
+}
+
+.note strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: .92rem;
+}
+
+.note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.filters label {
+  color: var(--muted);
+  font-size: .84rem;
+  font-weight: 650;
+}
+
+.filters select {
+  min-width: 155px;
+  padding: 11px 36px 11px 13px;
+  color: var(--text);
+  background: rgba(12, 16, 26, .92);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.filters select:focus {
+  border-color: var(--accent);
+}
+
+.filters option {
+  color: var(--text);
+  background: #101522;
+}
+
+.results-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 15px;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.results-line strong {
+  color: var(--text);
+}
+
+.mods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.mod-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 23px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .2s, border-color .2s, background .2s;
+}
+
+.mod-card:hover {
+  transform: translateY(-3px);
+  background: var(--panel-hover);
+  border-color: rgba(167, 139, 250, .4);
+}
+
+.card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin-bottom: 15px;
+}
+
+.version-tag {
+  padding: 4px 9px;
+  color: #d9ceff;
+  background: rgba(167, 139, 250, .13);
+  border: 1px solid rgba(167, 139, 250, .22);
+  border-radius: 7px;
+  font-size: .75rem;
+  font-weight: 750;
+}
+
+.platform-tag {
+  color: var(--muted);
+  font-size: .77rem;
+  font-weight: 650;
+}
+
+.mod-card h2 {
+  margin: 0 0 9px;
+  font-size: 1.22rem;
+  line-height: 1.35;
+  letter-spacing: -.3px;
+}
+
+.description {
+  flex: 1;
+  margin: 0 0 22px;
+  color: #b2bdcf;
+  font-size: .91rem;
+}
+
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 17px;
+  border-top: 1px solid var(--border);
+}
+
+.format {
+  color: var(--muted);
+  font-size: .77rem;
+  font-weight: 750;
+  letter-spacing: .7px;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 15px;
+  color: #0a0b12;
+  background: var(--accent);
+  border-radius: 9px;
+  font-size: .86rem;
+  font-weight: 800;
+  transition: filter .2s, transform .2s;
+}
+
+.download:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.empty-state {
+  display: none;
+  padding: 42px 20px;
+  color: var(--muted);
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+}
+
+footer {
+  padding: 22px 18px 30px;
+  color: var(--muted);
+  text-align: center;
+  font-size: .82rem;
+  border-top: 1px solid var(--border);
+  background: rgba(8, 11, 18, .65);
+}
+
+@media (max-width: 680px) {
+  main {
+    padding-top: 45px;
+  }
+
+  .mods-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    padding: 14px 5%;
+  }
+
+  .filters {
+    align-items: stretch;
+  }
+
+  .filters label {
+    width: 100%;
+  }
+
+  .filters select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .mod-card {
+    padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
 </head>
 
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="brand" href="/" aria-label="Fantom-X homepage">Fantom<span>-X</span></a>
-    <nav class="nav-links" aria-label="Main navigation">
-      <a href="/">Home</a>
-      <a href="#android">Android</a>
-      <a href="#ios">iOS</a>
-    </nav>
-  </div>
+<header class="topbar">
+  <a class="brand" href="/">FANTOM<span>-X</span></a>
+  <a class="back-link" href="/">← Back to Home</a>
 </header>
 
-<main class="wrap">
+<main>
   <section class="hero">
-    <div class="eyebrow">Community modifications</div>
-    <h1>Mini Militia<br><span>Classic Mods</span></h1>
-    <p class="hero-copy">
-      Custom themes, visual upgrades, skins and backgrounds for Mini Militia Classic.
-      Browse available releases and choose the build that fits your game version and device.
+    <div class="eyebrow">Mini Militia Classic</div>
+    <h1>MMC <span>Mods.</span></h1>
+    <p>
+      Explore custom themes, graphics and visual modifications for
+      Mini Militia Classic. Choose a release that suits your device
+      and preferred style.
     </p>
-
-    <div class="hero-actions">
-      <a class="button button-primary" href="#android">Explore Android mods ↓</a>
-      <a class="button button-secondary" href="#ios">View iOS release ↗</a>
-    </div>
-
-    <div class="stats" aria-label="Mod collection overview">
-      <div class="stat">
-        <strong>7</strong>
-        <span>Android releases</span>
-      </div>
-      <div class="stat">
-        <strong>1</strong>
-        <span>iOS release</span>
-      </div>
-      <div class="stat">
-        <strong>2</strong>
-        <span>v2 architectures</span>
-      </div>
-    </div>
   </section>
 
-  <!-- Newest Android releases first -->
-  <section class="section" id="android">
-    <div class="section-heading">
-      <div>
-        <div class="eyebrow">Android collection</div>
-        <h2>Latest releases</h2>
-        <p class="section-description">Newer mod releases first, followed by older versions.</p>
-      </div>
-      <span class="section-count">V6 → V0</span>
+  <aside class="note">
+    <div class="note-icon">ⓘ</div>
+    <div>
+      <strong>Before installing</strong>
+      <p>
+        Graphics options and compatibility vary between mods and devices.
+        Read each mod's description carefully and use only the graphics
+        settings it supports. Back up your files before replacing anything.
+      </p>
     </div>
-
-    <div class="grid">
-      <article class="card featured">
-        <div class="card-top">
-          <span class="release-label">Latest numbered release</span>
-          <span class="version-tag">v6</span>
-        </div>
-        <div class="tags">
-          <span class="tag highlight">Dark theme</span>
-          <span class="tag">HD / SD</span>
-          <span class="tag">Android</span>
-        </div>
-        <h3>MMC Theme Mod v6</h3>
-        <p class="description">
-          Dark, simple and clean graphics designed for both SD and HD.
-        </p>
-        <div class="warning">
-          Important: DO NOT SET THE GRAPHICS TO HIGH.
-        </div>
-        <a class="download" href="https://www.mediafire.com/file/pj6963h3zfp2u3r/MMC+Fantom+Theme+v6.apk/file" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card featured">
-        <div class="card-top">
-          <span class="release-label">Theme collaboration</span>
-          <span class="version-tag">v5</span>
-        </div>
-        <div class="tags">
-          <span class="tag">HDR</span>
-          <span class="tag">Skins</span>
-          <span class="tag">+2 avatars</span>
-          <span class="tag paid">Paid mod</span>
-        </div>
-        <h3>MMC Theme Mod v5 — Shadow × Fantom</h3>
-        <p class="description">
-          A themed build featuring additional skins and two extra avatars.
-        </p>
-        <p class="credits">Helper: Shadow</p>
-        <a class="download" href="https://www.mediafire.com/file/dlcg0ecmk0kk72r/MMC+Shadow+×+Fantom+Theme+Mod+v5+(0.14.4)+(3)+.apk/file" target="_blank" rel="noopener noreferrer">
-          Open download <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Theme release</span>
-          <span class="version-tag">v4</span>
-        </div>
-        <div class="tags">
-          <span class="tag">Dark</span>
-          <span class="tag">HD / SD</span>
-          <span class="tag">Original / Lite</span>
-        </div>
-        <h3>MMC Theme Mod v4</h3>
-        <p class="description">
-          Dark graphics with HD and SD options for the original and Lite versions.
-        </p>
-        <a class="download" href="https://www.mediafire.com/file/x3vinz55ygmujso/MMC_Fantom_Theme_Mod_v4_%25280.14.4%2529.apk/file" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Theme release</span>
-          <span class="version-tag">v3</span>
-        </div>
-        <div class="tags">
-          <span class="tag">HDR</span>
-          <span class="tag">Android</span>
-        </div>
-        <h3>MMC Theme Mod v3</h3>
-        <p class="description">
-          Custom theme for Mini Militia Classic version 0.14.4.
-        </p>
-        <a class="download" href="https://www.mediafire.com/file/wm94mnvnwb5d0z1/MMC+Theme+Mod+v3+(0.14.4).apk/file" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Theme release</span>
-          <span class="version-tag">v2 · 64-bit</span>
-        </div>
-        <div class="tags">
-          <span class="tag">64-bit</span>
-          <span class="tag">HDR</span>
-        </div>
-        <h3>MMC Theme Mod v2 — 64 bit</h3>
-        <p class="description">
-          Includes custom skins, tiles, backgrounds and other visual assets.
-        </p>
-        <a class="download" href="https://drive.google.com/file/d/1iY9Jk94H3pma7I6IeGDPfXexdyBVhb9j/view?usp=drivesdk" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Theme release</span>
-          <span class="version-tag">v2 · 32-bit</span>
-        </div>
-        <div class="tags">
-          <span class="tag">32-bit</span>
-        </div>
-        <h3>MMC Theme Mod v2 — 32 bit</h3>
-        <p class="description">
-          The 32-bit build for compatible devices.
-        </p>
-        <p class="credits">Helpers: nicknameadd, Shadow, Dheeraj</p>
-        <a class="download" href="https://drive.google.com/file/d/1RUFy9Qxo4DhljRqQDJNyaMALYzrDzAYY/view?usp=drivesdk" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Older release</span>
-          <span class="version-tag">v1</span>
-        </div>
-        <div class="tags">
-          <span class="tag">HDR</span>
-          <span class="tag">Android</span>
-        </div>
-        <h3>MMC Theme Mod v1</h3>
-        <p class="description">
-          Custom theme for Mini Militia Classic version 0.14.3.
-        </p>
-        <a class="download" href="https://www.mediafire.com/file/ggztjfzm0wttiz7/Mini_Militia_Classic_signed6.apk/file" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <span class="release-label">Original release</span>
-          <span class="version-tag">v0</span>
-        </div>
-        <div class="tags">
-          <span class="tag">HD</span>
-          <span class="tag">Android</span>
-        </div>
-        <h3>MMC Theme Mod v0</h3>
-        <p class="description">
-          The original theme mod for Mini Militia Classic version 0.13.7.
-        </p>
-        <a class="download" href="https://www.mediafire.com/file/aiuyn1078m81ai4/MMC_Fantom_Theme_0.13.7_.apk/file" target="_blank" rel="noopener noreferrer">
-          Download mod <span aria-hidden="true">↗</span>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <!-- iOS files are intentionally separate from Android APKs -->
-  <section class="section" id="ios">
-    <div class="section-heading">
-      <div>
-        <div class="eyebrow">Apple devices</div>
-        <h2>iOS releases</h2>
-        <p class="section-description">IPA downloads are listed separately from Android APKs.</p>
-      </div>
-      <span class="section-count">IPA · iOS</span>
-    </div>
-
-    <div class="ios-panel">
-      <div class="ios-heading">
-        <div class="ios-icon" aria-hidden="true">◈</div>
-        <div>
-          <h3>For iPhone and iPad</h3>
-          <p>Custom visual theme and background music.</p>
-        </div>
-      </div>
-
-      <div class="grid">
-        <article class="card ios-card">
-          <div class="card-top">
-            <span class="release-label">iOS theme</span>
-            <span class="version-tag">v7</span>
-          </div>
-          <div class="tags">
-            <span class="tag">IPA</span>
-            <span class="tag">HD</span>
-            <span class="tag">Dark theme</span>
-          </div>
-          <h3>MMC Theme Mod v7 for iOS</h3>
-          <p class="description">
-            Dark, simple and clean HD graphics, featuring Judas Funk background music.
-          </p>
-          <a class="download" href="https://www.mediafire.com/file/2vzry8jy486s869/MMC+Fantom+Theme+Mod+v7.ipa/file" target="_blank" rel="noopener noreferrer">
-            Download IPA <span aria-hidden="true">↗</span>
-          </a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <aside class="notice">
-    <strong style="color: #e6e8ed;">Before downloading</strong><br>
-    Check the game version and device architecture before installing a mod.
-    The v6 graphics warning is important. These are unofficial community modifications;
-    Mini Militia Classic and its trademarks belong to their respective owners.
   </aside>
+
+  <section class="filters" aria-label="Filter mods">
+    <label for="platformFilter">Platform / format</label>
+    <select id="platformFilter">
+      <option value="all">All formats</option>
+      <option value="apk">Android · APK</option>
+      <option value="ipa">iOS · IPA</option>
+    </select>
+
+    <label for="versionFilter">Game version</label>
+    <select id="versionFilter">
+      <option value="all">All versions</option>
+      <option value="0.14.4">0.14.4</option>
+      <option value="0.14.3">0.14.3</option>
+      <option value="0.13.7">0.13.7</option>
+      <option value="other">Not specified</option>
+    </select>
+  </section>
+
+  <div class="results-line">
+    <span><strong id="resultCount">8</strong> mods</span>
+    <span>Latest releases first</span>
+  </div>
+
+  <section class="mods-grid" id="modsGrid">
+
+    <article class="mod-card" data-platform="ipa" data-version="other">
+      <div class="card-top">
+        <span class="version-tag">Theme Mod v7</span>
+        <span class="platform-tag">iOS</span>
+      </div>
+      <h2>MMC Theme Mod v7</h2>
+      <p class="description">
+        Dark, simple and clean HD graphics with Judas funk background music.
+      </p>
+      <div class="card-bottom">
+        <span class="format">IPA · iOS</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/2vzry8jy486s869/MMC+Fantom+Theme+Mod+v7.ipa/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="other">
+      <div class="card-top">
+        <span class="version-tag">Theme Mod v6</span>
+        <span class="platform-tag">Android</span>
+      </div>
+      <h2>MMC Theme Mod v6</h2>
+      <p class="description">
+        Dark, simple and clean graphics, with SD and HD options.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/pj6963h3zfp2u3r/MMC+Fantom+Theme+v6.apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.4">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.4</span>
+        <span class="platform-tag">Theme Mod v5</span>
+      </div>
+      <h2>MMC Theme Mod v5</h2>
+      <p class="description">
+        HDR theme featuring skins and two additional avatars.
+        Paid mod created with helper Shadow.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/dlcg0ecmk0kk72r/MMC+Shadow+×+Fantom+Theme+Mod+v5+(0.14.4)+(3)+.apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.4">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.4</span>
+        <span class="platform-tag">Theme Mod v4</span>
+      </div>
+      <h2>MMC Theme Mod v4</h2>
+      <p class="description">
+        Dark theme with HD and SD options for the original and Lite versions.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/x3vinz55ygmujso/MMC_Fantom_Theme_Mod_v4_%25280.14.4%2529.apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.4">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.4</span>
+        <span class="platform-tag">Theme Mod v3</span>
+      </div>
+      <h2>MMC Theme Mod v3</h2>
+      <p class="description">
+        Custom HDR theme for a sharper, more detailed visual style.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/wm94mnvnwb5d0z1/MMC+Theme+Mod+v3+(0.14.4).apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.4">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.4</span>
+        <span class="platform-tag">Theme Mod v2</span>
+      </div>
+      <h2>MMC Theme Mod v2 · 64-bit</h2>
+      <p class="description">
+        HDR visual assets, including custom skins, tiles and backgrounds.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://drive.google.com/file/d/1iY9Jk94H3pma7I6IeGDPfXexdyBVhb9j/view?usp=drivesdk"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.4">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.4</span>
+        <span class="platform-tag">Theme Mod v2</span>
+      </div>
+      <h2>MMC Theme Mod v2 · 32-bit</h2>
+      <p class="description">
+        Includes contributions from helpers nicknameadd, Shadow and Dheeraj.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://drive.google.com/file/d/1RUFy9Qxo4DhljRqQDJNyaMALYzrDzAYY/view?usp=drivesdk"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.14.3">
+      <div class="card-top">
+        <span class="version-tag">Game v0.14.3</span>
+        <span class="platform-tag">Theme Mod v1</span>
+      </div>
+      <h2>MMC Theme Mod v1</h2>
+      <p class="description">
+        HDR theme modification for Mini Militia Classic.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/ggztjfzm0wttiz7/Mini_Militia_Classic_signed6.apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+    <article class="mod-card" data-platform="apk" data-version="0.13.7">
+      <div class="card-top">
+        <span class="version-tag">Game v0.13.7</span>
+        <span class="platform-tag">Theme Mod v0</span>
+      </div>
+      <h2>MMC Theme Mod v0</h2>
+      <p class="description">
+        HD theme modification for Mini Militia Classic.
+      </p>
+      <div class="card-bottom">
+        <span class="format">APK · Android</span>
+        <a class="download"
+           href="https://www.mediafire.com/file/aiuyn1078m81ai4/MMC_Fantom_Theme_0.13.7_.apk/file"
+           target="_blank" rel="noopener noreferrer">↓ Download</a>
+      </div>
+    </article>
+
+  </section>
+
+  <div class="empty-state" id="emptyState">
+    No mods match those filters. Try selecting another format or version.
+  </div>
 </main>
 
 <footer>
-  <div class="wrap footer-inner">
-    <a class="brand" href="/">Fantom<span>-X</span></a>
-    <span>Mini Militia Classic modifications</span>
-    <a href="/">Back to home ↑</a>
-  </div>
+  Fantom-X · MMC Mods
 </footer>
+
+<script>
+const platformFilter = document.getElementById("platformFilter");
+const versionFilter = document.getElementById("versionFilter");
+const cards = [...document.querySelectorAll(".mod-card")];
+const resultCount = document.getElementById("resultCount");
+const emptyState = document.getElementById("emptyState");
+const modsGrid = document.getElementById("modsGrid");
+
+function filterMods() {
+  const platform = platformFilter.value;
+  const version = versionFilter.value;
+  let visible = 0;
+
+  cards.forEach(card => {
+    const matchesPlatform =
+      platform === "all" || card.dataset.platform === platform;
+
+    const matchesVersion =
+      version === "all" ||
+      (version === "other" && card.dataset.version === "other") ||
+      card.dataset.version === version;
+
+    const show = matchesPlatform && matchesVersion;
+    card.style.display = show ? "flex" : "none";
+
+    if (show) visible++;
+  });
+
+  resultCount.textContent = visible;
+  emptyState.style.display = visible === 0 ? "block" : "none";
+  modsGrid.style.display = visible === 0 ? "none" : "grid";
+}
+
+platformFilter.addEventListener("change", filterMods);
+versionFilter.addEventListener("change", filterMods);
+filterMods();
+</script>
 </body>
 </html>

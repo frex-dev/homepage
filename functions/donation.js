@@ -1,4 +1,3 @@
-
 export async function onRequestPost({ request, env }) {
   const allowedOrigin = "https://fantomx.pages.dev";
 

@@ -4,30 +4,38 @@
 <script>
 (function () {
   const ua = navigator.userAgent || "";
-
-  const isMobile =
+  const isAndroid = /Android/i.test(ua);
+  const isMobileDevice =
     /Android|iPhone|iPad|iPod|Mobile/i.test(ua) ||
-    (navigator.maxTouchPoints > 1 &&
-     /Macintosh/i.test(ua));
+    (navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua));
 
-  if (isMobile) {
+  if (isMobileDevice) {
     document.documentElement.innerHTML = `
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>MMC Map Studio - Desktop Required</title>
         <style>
-          body {
+          * { box-sizing: border-box; }
+          html, body {
+            width: 100%;
+            height: 100%;
             margin: 0;
-            min-height: 100vh;
+            overflow: hidden !important;
+            overscroll-behavior: none;
+            position: fixed;
+            inset: 0;
+          }
+          body {
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 24px;
             background: #111722;
             color: #e8edf5;
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 24px;
-            box-sizing: border-box;
+            touch-action: none;
           }
           .message { max-width: 420px; }
           h1 { font-size: 25px; }
@@ -43,6 +51,14 @@
         </div>
       </body>
     `;
+
+    document.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('wheel', function (e) {
+      e.preventDefault();
+    }, { passive: false });
   }
 })();
 </script>
@@ -111,7 +127,7 @@ main{grid-template-columns:minmax(0,1fr) 350px;height:calc(100vh - 78px);min-hei
 <header><div class="brand"><img class="logo-img" src="./head13.png" alt="Fantom logo" onerror="this.style.display='none'"><div>Mini Militia Classic Map Studio<div class="sub">Ultimate tmx editor for MMC</div></div></div><div class="actions"><div class="header-socials" aria-label="Fantom links"><a class="social-icon youtube-link" href="https://www.youtube.com/@fantomxda2" target="_blank" rel="noopener noreferrer" aria-label="Subscribe my YouTube channel" title="Subscribe my YouTube channel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .5 6.186C0 8.07 0 12 0 12s0 3.93.5 5.814a3.016 3.016 0 0 0 2.123 2.136c1.871.505 9.377.505 9.377.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a><a class="social-icon discord-link" href="https://discord.gg/zWsxBHZGSX" target="_blank" rel="noopener noreferrer" aria-label="Join our official Discord server" title="Join our official Discord server"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 0 0-4.8851-1.5152.0741.0741 0 0 0-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4867 0-.1636-.3921-.4058-.8742-.6177-1.2495a.077.077 0 0 0-.0785-.037 19.7363 19.7363 0 0 0-4.885 1.515.069.069 0 0 0-.0321.0278C.5334 8.378.5334 12.2588.4273 16.0918c.004.0353.024.066.053.0849a19.9 19.9 0 0 0 6.001 3.0241.077.077 0 0 0 .084-.0275c.461-.6303.874-1.2956 1.226-1.9942a.076.076 0 0 0-.041-.1057 13.15 13.15 0 0 1-1.872-.8922.077.077 0 0 1-.008-.127c.126-.094.252-.191.372-.289a.074.074 0 0 1 .078-.01c3.927 1.797 8.18 1.797 12.06 0a.074.074 0 0 1 .078.01c.12.098.246.195.373.289a.077.077 0 0 1-.008.127 12.35 12.35 0 0 1-1.872.892.076.076 0 0 0-.041.1058c.36.696.773 1.36 1.226 1.994a.076.076 0 0 0 .084.0275 19.9 19.9 0 0 0 6.001-3.0241.077.077 0 0 0 .053-.0849c.5-5.177-.84-9.02-3.56-11.694a.061.061 0 0 0-.032-.0278zM8.02 14.56c-.97 0-1.77-.9-1.77-2s.78-2 1.77-2c1 0 1.79.91 1.77 2 0 1.1-.78 2-1.77 2zm6 0c-.97 0-1.77-.9-1.77-2s.78-2 1.77-2 1.79.91 1.77 2c0 1.1-.78 2-1.77 2z"/></svg></a><a class="social-icon dm-link" href="https://discord.com/users/933967888157659187" target="_blank" rel="noopener noreferrer" aria-label="Want help? DM me" title="Want help? DM me"><img src="./fantom.png" alt="Fantom" onerror="this.style.display='none'"></a></div><button id="donateBtn" class="donate-btn">Donate</button><button id="newBtn">＋ New map</button><label class="filebtn"><button type="button">Import TMX</button><input id="tmxInput" type="file" accept=".tmx,.xml"></label><button class="primary" id="exportBtn">Export TMX ↓</button><button id="saveProgressBtn" class="primary">Save · 7d</button><select id="savedSelect" title="Saved maps" style="width:145px"><option value="">Saved maps…</option></select><button id="loadSavedBtn">Load save</button><button id="themeBtn" title="Switch light/dark background">☼ Light mode</button></div></header>
 <main>
 <section class="panel workspace">
- <nav class="viewbar" aria-label="Editor views"><button class="active" data-view="all">▦ All</button><button data-view="tile">▧ Tile</button><button data-view="objects">♙ Objects</button><button data-view="tilebg">▤ TileBG</button><button data-view="stack">☷ Stack</button><span class="spacer"></span><span class="pill" id="viewLabel">Tile view</span></nav>
+ <nav class="viewbar" aria-label="Editor views"><button class="active" data-view="all">▦ All</button><button data-view="tile">▧ Tile</button><button data-view="objects">♙ Objects</button><button data-view="tilebg">▤ TileBG</button><button data-view="terrain">▧ Terrain</button><span class="spacer"></span><span class="pill" id="viewLabel">Tile view</span></nav>
  <div class="toolbar"><button id="undoBtn">↶ Undo</button><button id="redoBtn">↷ Redo</button><button id="gridBtn" class="active">Grid</button><button id="minimapToggle" class="active" title="Show or hide minimap">Minimap</button><button id="fitBtn">Fit map</button><button id="mapPropertiesBtn" title="Map properties">Map properties</button><span class="toolbar-dimensions"><input id="mapW" type="number" min="1" max="200" value="16" aria-label="Map width in tiles"><span>×</span><input id="mapH" type="number" min="1" max="200" value="8" aria-label="Map height in tiles"><button id="resizeBtn" title="Apply map dimensions">Apply</button></span><button id="screenshotBtn" title="Download map as PNG">⬇ PNG</button><button id="zoomOut">−</button><span class="pill" id="zoomLabel">100%</span><button id="zoomIn">＋</button><span class="pill" id="coordLabel">x: — y: —</span></div>
  <div id="viewNote" class="layer-view-note">Paint terrain on the tile layer. Ctrl/⌘ + wheel zooms around cursor; regular wheel scrolls the map.</div>
  <div class="map-scroll-shell" id="mapScrollShell"><div class="vertical-scroll-rail" id="verticalScrollRail" role="scrollbar" aria-label="Vertical map scroll" aria-orientation="vertical" aria-controls="mapViewport" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="scroll-thumb vertical-scroll-thumb" id="verticalScrollThumb"></div></div><div class="map-viewport" id="mapViewport" tabindex="0"><canvas class="map-canvas" id="mapCanvas"></canvas></div><div class="minimap-window" id="minimapWindow"><div class="minimap-title" id="minimapDrag">Minimap <button id="minimapClose" title="Hide minimap">×</button></div><div class="minimap-frame"><canvas id="minimap"></canvas></div></div><div class="map-scroll-corner" aria-hidden="true"></div><div class="horizontal-scroll-rail" id="horizontalScrollRail" role="scrollbar" aria-label="Horizontal map scroll" aria-orientation="horizontal" aria-controls="mapViewport" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><div class="scroll-thumb horizontal-scroll-thumb" id="horizontalScrollThumb"></div></div></div>
@@ -147,8 +163,76 @@ function hasTiles(){return Object.values(layers).some(a=>a.some(v=>v!==0))}funct
 function updateAtlasTabs(){document.querySelectorAll('[data-atlas]').forEach(b=>b.classList.toggle('active',b.dataset.atlas===state.atlasName));$('atlasInfo').textContent=state.atlas?`${state.atlasName} · ${state.atlas.width}×${state.atlas.height}px · ${state.atlasCols}×${state.atlasRows} tiles`:'Atlas unavailable'}
 function tileSrc(gid){const i=gid-1;return {x:MARGIN+(i%state.atlasCols)*(TILE+SPACING),y:MARGIN+Math.floor(i/state.atlasCols)*(TILE+SPACING),w:TILE,h:TILE}}
 function canvasSize(){const w=state.w*TILE,h=state.h*TILE;mapCanvas.width=w;mapCanvas.height=h;mapCanvas.style.width=(w*state.zoom)+'px';mapCanvas.style.height=(h*state.zoom)+'px';mapCanvas.style.flex='none';mapCanvas.style.width=(w*state.zoom)+'px';mapCanvas.style.height=(h*state.zoom)+'px'}
-function drawPastePreview(){const c=state.tileClipboard,p=state.pasteAt;if(!c||!p||!state.atlas||state.activeLayer==='objects'||state.view==='objects'||state.view==='stack')return;const arr=c.data;mapCtx.save();mapCtx.globalAlpha=.48;for(let yy=0;yy<c.h;yy++)for(let xx=0;xx<c.w;xx++){const gid=arr[yy*c.w+xx]||0,dx=(p.x+xx)*TILE,dy=(p.y+yy)*TILE;if(dx<0||dy<0||dx>=state.w*TILE||dy>=state.h*TILE||!gid)continue;const src=tileSrc(gid);try{mapCtx.drawImage(state.atlas,src.x,src.y,src.w,src.h,dx,dy,TILE,TILE)}catch{}}mapCtx.globalAlpha=1;mapCtx.strokeStyle='#ffe16a';mapCtx.lineWidth=2;mapCtx.setLineDash([5,3]);mapCtx.strokeRect(p.x*TILE+1,p.y*TILE+1,Math.min(c.w,state.w-p.x)*TILE-2,Math.min(c.h,state.h-p.y)*TILE-2);mapCtx.restore()}
-function draw(){if(!mapCanvas)return;canvasSize();const w=mapCanvas.width,h=mapCanvas.height;mapCtx.clearRect(0,0,w,h);mapCtx.fillStyle=$('mapViewport').classList.contains('light-map')?'#a9a393':'#0a1018';mapCtx.fillRect(0,0,w,h);const showAll=state.view==='all'||state.view==='stack';const showTile=showAll||state.view==='tile';const showBg=showAll||state.view==='tilebg';if(state.view!=='objects'){if(showBg)drawLayer('tilebg',1);if(showTile)drawLayer('tile',1)}if(state.showGrid){const zoom=Math.max(state.zoom,0.01);mapCtx.strokeStyle=$('mapViewport').classList.contains('light-map')?'rgba(0,0,0,.72)':'rgba(145,164,190,.35)';mapCtx.lineWidth=1/zoom;mapCtx.beginPath();for(let x=0;x<=state.w;x++){mapCtx.moveTo(x*TILE,0);mapCtx.lineTo(x*TILE,h)}for(let y=0;y<=state.h;y++){mapCtx.moveTo(0,y*TILE);mapCtx.lineTo(w,y*TILE)}mapCtx.stroke()}if(state.view==='objects'||state.view==='stack'||state.view==='all'||state.activeLayer==='objects')drawObjects();if(state.selection&&state.activeLayer!=='objects'){mapCtx.save();mapCtx.strokeStyle='#ffe16a';mapCtx.lineWidth=2;mapCtx.setLineDash([5,3]);mapCtx.strokeRect(state.selection.x*TILE+1,state.selection.y*TILE+1,state.selection.w*TILE-2,state.selection.h*TILE-2);mapCtx.restore()}drawPastePreview();drawMinimap();updateScrollbarsInfo();updateCustomScrollbars()}
+function drawPastePreview(){const c=state.tileClipboard,p=state.pasteAt;if(!c||!p||!state.atlas||state.activeLayer==='objects'||state.view==='objects')return;const arr=c.data;mapCtx.save();mapCtx.globalAlpha=.48;for(let yy=0;yy<c.h;yy++)for(let xx=0;xx<c.w;xx++){const gid=arr[yy*c.w+xx]||0,dx=(p.x+xx)*TILE,dy=(p.y+yy)*TILE;if(dx<0||dy<0||dx>=state.w*TILE||dy>=state.h*TILE||!gid)continue;const src=tileSrc(gid);try{mapCtx.drawImage(state.atlas,src.x,src.y,src.w,src.h,dx,dy,TILE,TILE)}catch{}}mapCtx.globalAlpha=1;mapCtx.strokeStyle='#ffe16a';mapCtx.lineWidth=2;mapCtx.setLineDash([5,3]);mapCtx.strokeRect(p.x*TILE+1,p.y*TILE+1,Math.min(c.w,state.w-p.x)*TILE-2,Math.min(c.h,state.h-p.y)*TILE-2);mapCtx.restore()}
+function draw(){
+  if(!mapCanvas)return;
+
+  canvasSize();
+
+  const w=mapCanvas.width;
+  const h=mapCanvas.height;
+
+  mapCtx.clearRect(0,0,w,h);
+  mapCtx.fillStyle=$('mapViewport').classList.contains('light-map')
+    ?'#a9a393':'#0a1018';
+  mapCtx.fillRect(0,0,w,h);
+
+  const showAll=state.view==='all';
+  const showTerrain=state.view==='terrain';
+  const showTile=showAll||showTerrain||state.view==='tile';
+  const showBg=showAll||showTerrain||state.view==='tilebg';
+
+  if(state.view!=='objects'){
+    if(showBg)drawLayer('tilebg',1);
+    if(showTile)drawLayer('tile',1);
+  }
+
+  if(state.showGrid){
+    const zoom=Math.max(state.zoom,0.01);
+
+    mapCtx.strokeStyle=$('mapViewport').classList.contains('light-map')
+      ?'rgba(0,0,0,.72)'
+      :'rgba(145,164,190,.35)';
+
+    mapCtx.lineWidth=1/zoom;
+    mapCtx.beginPath();
+
+    for(let x=0;x<=state.w;x++){
+      mapCtx.moveTo(x*TILE,0);
+      mapCtx.lineTo(x*TILE,h);
+    }
+
+    for(let y=0;y<=state.h;y++){
+      mapCtx.moveTo(0,y*TILE);
+      mapCtx.lineTo(w,y*TILE);
+    }
+
+    mapCtx.stroke();
+  }
+
+  if(state.view==='objects'||state.view==='all'){
+    drawObjects();
+  }
+
+  if(state.selection&&state.activeLayer!=='objects'){
+    mapCtx.save();
+    mapCtx.strokeStyle='#ffe16a';
+    mapCtx.lineWidth=2;
+    mapCtx.setLineDash([5,3]);
+    mapCtx.strokeRect(
+      state.selection.x*TILE+1,
+      state.selection.y*TILE+1,
+      state.selection.w*TILE-2,
+      state.selection.h*TILE-2
+    );
+    mapCtx.restore();
+  }
+
+  drawPastePreview();
+  drawMinimap();
+  updateScrollbarsInfo();
+  updateCustomScrollbars();
+}
 function drawLayer(name,alpha){const a=layers[name];if(!a||!state.atlas)return;mapCtx.globalAlpha=alpha;for(let i=0;i<a.length;i++){const gid=a[i];if(!gid)continue;const x=(i%state.w)*TILE,y=Math.floor(i/state.w)*TILE,s=tileSrc(gid);try{mapCtx.drawImage(state.atlas,s.x,s.y,s.w,s.h,x,y,TILE,TILE)}catch{}}mapCtx.globalAlpha=1}
 function drawObjects(){state.objects.forEach(o=>{const x=Number.isFinite(o.px)?o.px:o.x*TILE,y=Number.isFinite(o.py)?o.py:o.y*TILE,k=objectKind(o);const colors={player:'#ff35d3',weapon:'#ffffff',spritefg:'#39ff14',spritebg:'#087a18',flagOrange:'#ff8c00',flagBlue:'#168bff',flagHelper:'#ff8c00',ctf1:'#b85a00',ctf2:'#123f9b',ctfWeapon:'#ff2424'};const color=colors[k]||'#ff35d3';mapCtx.beginPath();mapCtx.arc(x,y,9,0,Math.PI*2);mapCtx.fillStyle=o.id===state.selectedObjectId?'#fff08a':color;mapCtx.fill();mapCtx.lineWidth=2;mapCtx.strokeStyle=o.id===state.selectedObjectId?'#fff':color;mapCtx.stroke();mapCtx.beginPath();mapCtx.moveTo(x-5,y);mapCtx.lineTo(x+5,y);mapCtx.moveTo(x,y-5);mapCtx.lineTo(x,y+5);mapCtx.strokeStyle=k==='weapon'?'#555':color;mapCtx.lineWidth=1.5;mapCtx.stroke();if(state.zoom>=.7){mapCtx.font='11px system-ui';mapCtx.textBaseline='bottom';mapCtx.fillStyle='#111722';mapCtx.fillText(o.name,x+10,y-4);mapCtx.fillStyle=color;mapCtx.fillText(o.name,x+9,y-5)}})}
 function drawAtlas(){const c=$('atlasCanvas'),r=c.getBoundingClientRect();if(!r.width)return;const dpr=window.devicePixelRatio||1;c.width=Math.max(1,Math.round(r.width*dpr));c.height=Math.max(1,Math.round(r.height*dpr));const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,r.width,r.height);g.fillStyle='#080c12';g.fillRect(0,0,r.width,r.height);if(!state.atlas){g.fillStyle='#9aa9bf';g.fillText('Atlas missing',12,20);return}g.imageSmoothingEnabled=false;const scale=Math.min(r.width/state.atlas.width,r.height/state.atlas.height),dw=state.atlas.width*scale,dh=state.atlas.height*scale,ox=(r.width-dw)/2,oy=(r.height-dh)/2;g.drawImage(state.atlas,ox,oy,dw,dh);if(state.selectedTile>=1&&state.selectedTile<=state.atlasCount){const s=tileSrc(state.selectedTile);g.strokeStyle='#75e0b2';g.lineWidth=2;g.strokeRect(ox+s.x*scale,oy+s.y*scale,s.w*scale,s.h*scale)}if(state.atlasSelection){const q=state.atlasSelection;g.save();g.fillStyle='rgba(117,224,178,.18)';g.fillRect(ox+(MARGIN+q.x*(TILE+SPACING))*scale,oy+(MARGIN+q.y*(TILE+SPACING))*scale,q.w*(TILE+SPACING)*scale-SPACING*scale,q.h*(TILE+SPACING)*scale-SPACING*scale);g.strokeStyle='#ffe16a';g.lineWidth=2;g.strokeRect(ox+(MARGIN+q.x*(TILE+SPACING))*scale,oy+(MARGIN+q.y*(TILE+SPACING))*scale,q.w*(TILE+SPACING)*scale-SPACING*scale,q.h*(TILE+SPACING)*scale-SPACING*scale);g.restore()}}
@@ -161,13 +245,43 @@ function updateHistory(){ $('undoBtn').disabled=!state.history.length;$('redoBtn
 function snap(){state.history.push({layers:{tile:new Int32Array(layers.tile),tilebg:new Int32Array(layers.tilebg)},objects:JSON.parse(JSON.stringify(state.objects))});if(state.history.length>60)state.history.shift();state.future=[];updateHistory()}
 function restore(s){layers={tile:new Int32Array(s.layers.tile),tilebg:new Int32Array(s.layers.tilebg)};state.objects=JSON.parse(JSON.stringify(s.objects));renderObjects();draw();markDirty();updateHistory()}
 function undo(){if(!state.history.length)return;state.future.push({layers:{tile:new Int32Array(layers.tile),tilebg:new Int32Array(layers.tilebg)},objects:JSON.parse(JSON.stringify(state.objects))});restore(state.history.pop())}function redo(){if(!state.future.length)return;state.history.push({layers:{tile:new Int32Array(layers.tile),tilebg:new Int32Array(layers.tilebg)},objects:JSON.parse(JSON.stringify(state.objects))});restore(state.future.pop())}
-function setView(view){state.view=view;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('viewLabel').textContent=({all:'All view',tile:'Tile view',tilebg:'TileBG view',objects:'Objects view',stack:'Stack view'})[view]||'All view';$('viewNote').textContent=({all:'All layers are visible. Painting always applies to the selected layer shown in the layer stack.',tile:'Tile layer view. Painting applies to the selected tile layer.',tilebg:'TileBG view. Painting applies to TileBG only when TileBG is selected in the layer stack.',objects:'Objects view. Double-click empty map space to add a point; double-click a point to edit it.',stack:'Stack view. Select a layer below; changing views never changes the selected layer.'})[view];$('atlasSection').classList.toggle('hidden',view==='objects');$('toolSection').classList.toggle('hidden',view==='stack');renderToolMode();$('objectSection').classList.add('hidden');renderLayers();draw()}
+function setView(view){
+  state.view=view;
+
+  document.querySelectorAll('[data-view]').forEach(b=>
+    b.classList.toggle('active',b.dataset.view===view)
+  );
+
+  $('viewLabel').textContent=({
+    all:'All view',
+    tile:'Tile view',
+    tilebg:'TileBG view',
+    objects:'Objects view',
+    terrain:'Terrain view'
+  })[view]||'All view';
+
+  $('viewNote').textContent=({
+    all:'All layers are visible, including objects.',
+    tile:'Tile view. Only the tile layer is visible.',
+    tilebg:'TileBG view. Only the tilebg layer is visible.',
+    objects:'Objects view. Double-click empty map space to add a point; double-click a point to edit it.',
+    terrain:'Terrain view. Both tile and tilebg layers are visible; objects are hidden.'
+  })[view];
+
+  $('atlasSection').classList.toggle('hidden',view==='objects');
+  $('toolSection').classList.remove('hidden');
+
+  renderToolMode();
+  $('objectSection').classList.add('hidden');
+  renderLayers();
+  draw();
+}
 function renderToolMode(){const objectMode=state.activeLayer==='objects';$('toolSectionTitle').textContent=objectMode?'Object tools':'Tile tools';$('tileTools').classList.toggle('hidden',objectMode);$('objectTools').classList.toggle('hidden',!objectMode);$('toolHelp').textContent=objectMode?'Double-click the map to create or inspect point objects.':'Select a tile tool to edit the active tile layer.';}
 function renderLayers(){const root=$('layerList');root.innerHTML='';['tilebg','tile','objects'].forEach(name=>{const d=document.createElement('button');d.type='button';d.className='layerrow'+(state.activeLayer===name?' active':'');d.innerHTML=`<span>${name==='tilebg'?'▧':name==='tile'?'▦':'♙'}</span><span class="layername">${name}</span>`;d.setAttribute('aria-pressed',state.activeLayer===name?'true':'false');d.onclick=()=>{clearTileSelection(true);state.activeLayer=name;renderLayers();renderToolMode();drawAtlas();draw();$('activeLayerPill').textContent=state.activeLayer};root.append(d)})}
 function renderObjects(){const root=$('objectList');root.innerHTML='';state.objects.forEach(o=>{const d=document.createElement('div');d.className='objectrow';d.style.borderColor=o.id===state.selectedObjectId?'var(--green)':'var(--line)';d.innerHTML=`<span style="color:var(--gold)">●</span><span style="flex:1;min-width:0"><b>${esc(o.name)}</b><div class="tiny">${Math.round(o.px??o.x*TILE)}, ${Math.round(o.py??o.y*TILE)}</div>${Object.entries(o.properties||{}).map(([k,v])=>`<div class="tiny"><b>${esc(k)}:</b> ${esc(v)}</div>`).join('')}</span><button type="button">Edit</button>`;d.querySelector('button').onclick=()=>openObjectModal(o);d.onclick=e=>{if(e.target.tagName==='BUTTON')return;state.selectedObjectId=o.id;renderObjects();draw()};root.append(d)});$('selectedObjectInfo').textContent=state.selectedObjectId?('Selected: '+(state.objects.find(o=>o.id===state.selectedObjectId)?.name||'none')):'No object selected';renderLayers()}
 function mapPoint(e){const r=mapCanvas.getBoundingClientRect();return {x:(e.clientX-r.left)/state.zoom,y:(e.clientY-r.top)/state.zoom}}
 function cellAt(p){return {x:Math.floor(p.x/TILE),y:Math.floor(p.y/TILE),i:Math.floor(p.y/TILE)*state.w+Math.floor(p.x/TILE)}}
-function paintAt(p){if(state.view==='objects'||state.activeLayer==='objects'||state.view==='stack')return;const targetLayer=state.activeLayer==='tilebg'?'tilebg':'tile';const c=cellAt(p);if(c.x<0||c.y<0||c.x>=state.w||c.y>=state.h)return;const arr=layers[targetLayer];if(state.tool==='select'){return}if(state.tool!=='erase'&&(!state.selectedTile||state.selectedTile<1)){toast('Choose a tile from the tileset first');return}if(state.tool==='fill'){const target=arr[c.i],replacement=state.selectedTile;if(target===replacement)return;const stack=[c.i],seen=new Set([c.i]);while(stack.length){const i=stack.pop();if(i<0||i>=arr.length||arr[i]!==target)continue;arr[i]=replacement;const x=i%state.w,y=Math.floor(i/state.w);for(const n of [x>0?i-1:-1,x<state.w-1?i+1:-1,y>0?i-state.w:-1,y<state.h-1?i+state.w:-1])if(n>=0&&!seen.has(n)){seen.add(n);stack.push(n)}}markDirty();draw();return}arr[c.i]=state.tool==='erase'?0:state.selectedTile;markDirty();draw()}
+function paintAt(p){if(state.view==='objects'||state.activeLayer==='objects')return;const targetLayer=state.activeLayer==='tilebg'?'tilebg':'tile';const c=cellAt(p);if(c.x<0||c.y<0||c.x>=state.w||c.y>=state.h)return;const arr=layers[targetLayer];if(state.tool==='select'){return}if(state.tool!=='erase'&&(!state.selectedTile||state.selectedTile<1)){toast('Choose a tile from the tileset first');return}if(state.tool==='fill'){const target=arr[c.i],replacement=state.selectedTile;if(target===replacement)return;const stack=[c.i],seen=new Set([c.i]);while(stack.length){const i=stack.pop();if(i<0||i>=arr.length||arr[i]!==target)continue;arr[i]=replacement;const x=i%state.w,y=Math.floor(i/state.w);for(const n of [x>0?i-1:-1,x<state.w-1?i+1:-1,y>0?i-state.w:-1,y<state.h-1?i+state.w:-1])if(n>=0&&!seen.has(n)){seen.add(n);stack.push(n)}}markDirty();draw();return}arr[c.i]=state.tool==='erase'?0:state.selectedTile;markDirty();draw()}
 function hitObject(p){let best=null,dist=Infinity;for(const o of state.objects){const dx=(o.px??o.x*TILE)-p.x,dy=(o.py??o.y*TILE)-p.y,d=Math.hypot(dx,dy);if(d<Math.max(14/state.zoom,12)&&d<dist){best=o;dist=d}}return best}
 function objectCounters(prefix){const nums=state.objects.map(o=>{const m=String(o.name||'').match(new RegExp('^'+prefix.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'_(\\d+)$'));return m?Number(m[1]):-1}).filter(n=>n>=0);return nums.length?Math.max(...nums)+1:1}
 function nextName(prefix){return prefix+'_'+String(Math.max(1,objectCounters(prefix)))}

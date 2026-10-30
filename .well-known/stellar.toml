@@ -1,0 +1,8 @@
+[[CURRENCIES]]
+code = "FANTOM"
+issuer = "GCVDZFMUFU3TYG4GMHEPL36YNH3PR6QGZGUWLYHAPVTBHIAQADFQFQ3T"
+name = "Fantom Coin"
+desc = "A community-created digital asset on Stellar."
+image = "https://fantomx.pages.dev/fantom-coin.png"
+display_decimals = 7
+fixed_number = 1000000

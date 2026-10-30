@@ -1,8 +1,28 @@
+
+# ==========================================
+# FANTOM COIN — OFFICIAL STELLAR ASSET
+# ==========================================
+
+[DOCUMENTATION]
+ORG_NAME = "Fantom Coin"
+ORG_URL = "https://fantomx.pages.dev"
+ORG_LOGO = "https://fantomx.pages.dev/fantom-coin.png"
+ORG_DESCRIPTION = "Fantom Coin is a community-created digital asset built on the Stellar network."
+ORG_TWITTER = ""
+ORG_GITHUB = ""
+ORG_OFFICIAL_EMAIL = ""
+
+# ==========================================
+# ASSET INFORMATION
+# ==========================================
+
 [[CURRENCIES]]
 code = "FANTOM"
 issuer = "GCVDZFMUFU3TYG4GMHEPL36YNH3PR6QGZGUWLYHAPVTBHIAQADFQFQ3T"
 name = "Fantom Coin"
-desc = "A community-created digital asset on Stellar."
+desc = "A community-created digital asset issued on the Stellar blockchain."
+conditions = "Fixed supply of 1,000,000 FANTOM tokens. No additional issuance is planned."
 image = "https://fantomx.pages.dev/fantom-coin.png"
 display_decimals = 7
 fixed_number = 1000000
+status = "live"

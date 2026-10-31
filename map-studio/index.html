@@ -447,12 +447,12 @@ function draw(){
 
     for(let x=0;x<=state.w;x++){
       mapCtx.moveTo(x*TILE,0);
-      mapCtx.lineTo(x*TILE,h);
+      mapCtx.lineTo(x*TILE,state.h*TILE);
     }
 
     for(let y=0;y<=state.h;y++){
       mapCtx.moveTo(0,y*TILE);
-      mapCtx.lineTo(w,y*TILE);
+      mapCtx.lineTo(state.w*TILE,y*TILE);
     }
 
     mapCtx.stroke();

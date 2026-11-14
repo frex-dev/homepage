@@ -8,8 +8,8 @@
     <property name="sw5" value="126" />
     <property name="sw6" value="21" />
   </properties>
-  <tileset firstgid="1" name="colliosionsd" margin="2" spacing="2" columns="15" tilecount="225" tileheight="64" tilewidth="64">
-    <image source="tile64_new.png" width="992" height="992" />
+  <tileset firstgid="1" name="tile64_new" margin="2" spacing="2" columns="15" tilecount="225" tileheight="64" tilewidth="64">
+    <image source="collisionsd.png" width="992" height="992" />
   </tileset>
   <layer id="2" name="tilebg" width="40" height="25">
     <data encoding="base64" compression="gzip">

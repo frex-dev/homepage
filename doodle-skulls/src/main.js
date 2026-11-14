@@ -70,7 +70,7 @@
       if (app.world) renderer.drawWorld(w, app.level, app.assets, app.assets.heads[app.headIndex], Date.now());
     } else {
       ctx.setTransform(renderer.k, 0, 0, renderer.k, 0, 0);
-      ui.draw();
+      ui.draw(dtMs);
     }
     root.requestAnimationFrame(frame);
   }
@@ -138,7 +138,11 @@
   root.requestAnimationFrame(frame);          /* loading screen starts drawing immediately */
   loadAll().then(function () {
     var wait = Math.max(0, 800 - (Date.now() - ui.loadingStart));
-    setTimeout(function () { ui.state = S.MENU; }, wait);
+    setTimeout(function () {
+      ui.state = S.MENU;
+      var q = /[?&]level=(\d+)/.exec((root.location && root.location.search) || '');
+      if (q) ui.startLevel(Math.max(1, Math.min(150, parseInt(q[1], 10))));
+    }, wait);
   });
   root.DS2.app = app;
 })(window);

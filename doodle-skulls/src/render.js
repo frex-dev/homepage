@@ -102,7 +102,7 @@
       });
     }
 
-    drawSkull(ctx, headImg, world.headDrawX, world.headDrawY, world.visualRadius * 2, world.rollDraw * Math.PI / 180, now);
+    drawSkull(   ctx,   headImg,   world.renderHeadX,   world.renderHeadY,   world.visualRadius * 2,   world.renderRoll * Math.PI / 180,   now );
 
     ctx.setTransform(k, 0, 0, k, 0, 0);
     this.drawHUD(world, assets, z, halfW, halfH);

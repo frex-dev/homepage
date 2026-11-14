@@ -1,17 +1,6 @@
 
-/* Collision system: strictly uses collisionsd.png.
- *
- * Collision tileset:
- * firstgid = 1
- * image = 992x992
- * tile size = 64x64
- * columns = 15
- * tile count = 225
- * margin = 2
- * spacing = 2
- *
- * No polygon data or fallback is used.
- */
+/* Full pixel collision masks from collisionsd.png.
+   No polygon fallback and no heightfield approximation. */
 (function (root) {
   'use strict';
 
@@ -29,25 +18,22 @@
     imageHeight: 992
   };
 
-  var heightMap = {};
-  var hasColl = {};
+  var masks = Object.create(null);
+  var hasColl = Object.create(null);
   var source = 'unloaded';
 
   function reset() {
-    heightMap = {};
-    hasColl = {};
+    masks = Object.create(null);
+    hasColl = Object.create(null);
     source = 'unloaded';
   }
 
   function useImageData(rgba, w, h) {
     reset();
 
-    if (!rgba || w !== CONFIG.imageWidth ||
-        h !== CONFIG.imageHeight ||
+    if (!rgba || w !== 992 || h !== 992 ||
         rgba.length !== w * h * 4) {
-      throw new Error(
-        'Invalid collisionsd.png. Expected 992x992 RGBA image.'
-      );
+      throw new Error('Expected collisionsd.png at 992x992.');
     }
 
     var hasAlpha = false;
@@ -60,54 +46,42 @@
     }
 
     function solid(x, y) {
-      var offset = (y * w + x) * 4;
-      var alpha = rgba[offset + 3];
+      var p = (y * w + x) * 4;
+      var a = rgba[p + 3];
 
-      if (hasAlpha) {
-        return alpha > 127;
-      }
+      if (a <= 127) return false;
+      if (hasAlpha) return true;
 
-      var brightness =
-        (rgba[offset] + rgba[offset + 1] + rgba[offset + 2]) / 3;
-
-      return alpha > 127 && brightness > 127;
+      return (
+        rgba[p] + rgba[p + 1] + rgba[p + 2]
+      ) / 3 > 127;
     }
 
-    var columns = CONFIG.columns;
-    var tw = CONFIG.tileWidth;
-    var th = CONFIG.tileHeight;
-    var margin = CONFIG.margin;
-    var spacing = CONFIG.spacing;
-
     for (var id = 0; id < CONFIG.tileCount; id++) {
-      var sx = margin + (id % columns) * (tw + spacing);
-      var sy = margin + Math.floor(id / columns) * (th + spacing);
+      var sx = CONFIG.margin +
+        (id % CONFIG.columns) * (T + CONFIG.spacing);
 
-      if (sx + tw > w || sy + th > h) {
-        throw new Error('Collision tile outside image bounds: ' + id);
+      var sy = CONFIG.margin +
+        Math.floor(id / CONFIG.columns) * (T + CONFIG.spacing);
+
+      if (sx + T > w || sy + T > h) {
+        throw new Error('Collision tile outside image: ' + id);
       }
 
-      var heights = new Int32Array(T);
-      var has = false;
+      var mask = new Uint8Array(T * T);
+      var found = false;
 
-      for (var c = 0; c < T; c++) {
-        heights[c] = T;
-
-        var px = sx + c;
-
-        for (var r = 0; r < T; r++) {
-          var py = sy + r;
-
-          if (solid(px, py)) {
-            heights[c] = r;
-            has = true;
-            break;
+      for (var y = 0; y < T; y++) {
+        for (var x = 0; x < T; x++) {
+          if (solid(sx + x, sy + y)) {
+            mask[y * T + x] = 1;
+            found = true;
           }
         }
       }
 
-      if (has) {
-        heightMap[id] = heights;
+      if (found) {
+        masks[id] = mask;
         hasColl[id] = true;
       }
     }
@@ -115,9 +89,9 @@
     source = 'collisionsd.png';
 
     console.log(
-      '[DS2] Collision source: collisionsd.png',
-      '| Tiles:', CONFIG.tileCount,
-      '| Image:', w + 'x' + h
+      '[DS2] Full collision masks loaded:',
+      CONFIG.tileCount,
+      'tiles'
     );
 
     return true;
@@ -126,12 +100,8 @@
   function useImage(img) {
     reset();
 
-    if (!img ||
-        img.width !== CONFIG.imageWidth ||
-        img.height !== CONFIG.imageHeight) {
-      throw new Error(
-        'collisionsd.png missing or invalid. Expected 992x992.'
-      );
+    if (!img || img.width !== 992 || img.height !== 992) {
+      throw new Error('Invalid collisionsd.png. Expected 992x992.');
     }
 
     try {
@@ -139,34 +109,34 @@
       canvas.width = img.width;
       canvas.height = img.height;
 
-      var ctx = canvas.getContext('2d');
+      var ctx = canvas.getContext('2d', {
+        willReadFrequently: true
+      });
 
-      if (!ctx) {
-        throw new Error('Could not create collision canvas context.');
-      }
+      if (!ctx) throw new Error('Canvas context unavailable.');
 
       ctx.drawImage(img, 0, 0);
 
-      var imageData = ctx.getImageData(
+      var data = ctx.getImageData(
         0, 0, img.width, img.height
       );
 
-      return useImageData(
-        imageData.data,
-        img.width,
-        img.height
-      );
+      return useImageData(data.data, img.width, img.height);
     } catch (error) {
       reset();
       throw new Error(
-        'Failed to load collision data from collisionsd.png: ' +
-        error.message
+        'Could not read collisionsd.png: ' + error.message
       );
     }
   }
 
-  function clamp(v, min, max) {
-    return v < min ? min : (v > max ? max : v);
+  function validPixel(x, y) {
+    return (
+      Number.isFinite(x) &&
+      Number.isFinite(y) &&
+      x >= 0 && x < T &&
+      y >= 0 && y < T
+    );
   }
 
   var Collision = {
@@ -183,22 +153,29 @@
       return hasColl[id] === true;
     },
 
-    getSurfaceRow: function (id, x) {
-      var heights = heightMap[id];
+    isSolid: function (id, x, y) {
+      var mask = masks[id];
 
-      if (!heights) return T;
+      if (!mask || !validPixel(x, y)) return false;
 
-      return heights[clamp(x, 0, T - 1)];
+      return mask[
+        Math.floor(y) * T + Math.floor(x)
+      ] === 1;
     },
 
-    isSolid: function (id, x, y) {
-      var heights = heightMap[id];
+    /* Retained for compatibility with older engine code. */
+    getSurfaceRow: function (id, x) {
+      var mask = masks[id];
 
-      if (!heights) return false;
+      if (!mask) return T;
 
-      var surface = heights[clamp(x, 0, T - 1)];
+      x = Math.max(0, Math.min(T - 1, Math.floor(x)));
 
-      return y >= surface && surface < T;
+      for (var y = 0; y < T; y++) {
+        if (mask[y * T + x]) return y;
+      }
+
+      return T;
     }
   };
 
@@ -208,5 +185,4 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = Collision;
   }
-
 })(typeof window !== 'undefined' ? window : globalThis);

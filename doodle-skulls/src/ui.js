@@ -35,7 +35,7 @@
     var n = 0; this.avatarUnlocked.forEach(function (u) { if (u) n++; });
     return n * 5;
   };
-  U.go = function (s) { this.state = s; DS2.Audio.play('reload'); };
+  U.go = function (s) { if (s === S.AVATAR) this.car = null; this.state = s; DS2.Audio.play('reload'); };
 
   /* ----- drawing helpers ----- */
   U.btn = function (r, label, cb, opts) {
@@ -97,13 +97,7 @@
   U.drawMenu = function () {
     var self = this, a = this.app.assets, W = this.app.W, H = this.app.H, ctx = this.app.ctx;
     this.background(); this.hud();
-    if (a.mascot) { /* mascot: head selected, bobbing */
-      var h = a.heads[this.selectedHead], s = H * 0.28, bob = Math.sin(Date.now() / 500) * 6;
-      if (h) { ctx.save(); ctx.beginPath(); ctx.arc(W * 0.25, H * 0.5 + bob, s / 2, 0, 7); ctx.clip(); ctx.drawImage(h, W * 0.25 - s / 2, H * 0.5 + bob - s / 2, s, s); ctx.restore(); }
-    } else {
-      var hd = a.heads[this.selectedHead], sz = H * 0.28, b2 = Math.sin(Date.now() / 500) * 6;
-      if (hd) { ctx.save(); ctx.beginPath(); ctx.arc(W * 0.25, H * 0.5 + b2, sz / 2, 0, 7); ctx.clip(); ctx.drawImage(hd, W * 0.25 - sz / 2, H * 0.5 + b2 - sz / 2, sz, sz); ctx.restore(); }
-    }
+    DS2.drawSkull(ctx, a.heads[this.selectedHead], W * 0.25, H * 0.5 + Math.sin(Date.now() / 500) * 6, H * 0.3, 0, Date.now());
     this.text('Doodle Skulls 2', W / 2, H * 0.14, H * 0.11, '#ffe45e');
     this.text(this.playerName, W * 0.25, H * 0.74, H * 0.05);
     this.btn({ x: W * 0.55, y: H * 0.38, w: W * 0.3, h: H * 0.18 }, 'START', function () { self.go(S.LEVEL_SELECT); });
@@ -146,25 +140,60 @@
     return this._flip[k];
   };
 
-  U.drawAvatar = function () {
-    var self = this, a = this.app.assets, W = this.app.W, H = this.app.H, ctx = this.app.ctx;
-    this.background(); this.hud(); this.back(S.MENU);
-    this.text('Choose your skull', W / 2, H * 0.1, H * 0.07);
-    var cols = 6, cw = W * 0.8 / cols, ch = H * 0.7 / 3, size = Math.min(cw, ch) * 0.8;
-    for (var i = 0; i < HEAD_COUNT; i++) {
-      var cx = W * 0.1 + (i % cols) * cw + cw / 2, cy = H * 0.2 + Math.floor(i / cols) * ch + ch / 2;
-      var r = { x: cx - size / 2, y: cy - size / 2, w: size, h: size };
-      ctx.fillStyle = i === this.selectedHead ? 'rgba(255,228,94,.5)' : 'rgba(0,0,0,.35)'; ctx.fillRect(r.x - 6, r.y - 6, r.w + 12, r.h + 24);
-      if (a.heads[i]) { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, size / 2, 0, 7); ctx.clip(); ctx.drawImage(a.heads[i], r.x, r.y, size, size); ctx.restore(); }
-      var cost = this.avatarCost(i);
-      if (!this.avatarUnlocked[i]) { ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.beginPath(); ctx.arc(cx, cy, size / 2, 0, 7); ctx.fill(); this.text(String(cost), cx, cy, size * 0.35, '#ffe45e'); }
-      (function (i) {
-        self.buttons.push({ r: r, key: 'av' + i, cb: function () {
-          if (self.avatarUnlocked[i]) { self.selectedHead = i; self.save(); DS2.Audio.play('reload'); }
-          else { var c = self.avatarCost(i); if (self.coins >= c) { self.coins -= c; self.avatarUnlocked[i] = true; self.selectedHead = i; self.save(); DS2.Audio.play('gotcoin'); } }
-        } });
-      })(i);
+  U.dark = function (i) {
+    this._dark = this._dark || {};
+    var img = this.app.assets.heads[i];
+    if (!img) return null;
+    if (!this._dark[i]) {
+      var c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      var x = c.getContext('2d'); x.drawImage(img, 0, 0);
+      x.globalCompositeOperation = 'source-atop'; x.fillStyle = 'rgba(0,0,0,.62)'; x.fillRect(0, 0, c.width, c.height);
+      this._dark[i] = c;
     }
+    return this._dark[i];
+  };
+
+  U.arrowBtn = function (x, y, s, dir, cb) {
+    var ctx = this.app.ctx, a = this.app.assets, r = { x: x - s / 2, y: y - s / 2, w: s, h: s };
+    var img = dir > 0 ? a.arrow : this.rot(a.arrow, true);
+    var key = 'car' + dir, sc = this.scale[key] || 1;
+    sc += ((this.pressedKey === key ? 0.88 : 1) - sc) * 0.3; this.scale[key] = sc;
+    if (img) ctx.drawImage(img, x - s * sc / 2, y - s * sc / 2, s * sc, s * sc);
+    else { this.text(dir > 0 ? '>' : '<', x, y, s * 0.8); }
+    this.buttons.push({ r: r, cb: cb, key: key });
+  };
+
+  U.drawAvatar = function () {
+    var self = this, a = this.app.assets, W = this.app.W, H = this.app.H, ctx = this.app.ctx, N = HEAD_COUNT;
+    this.background(); this.hud(); this.back(S.MENU);
+    var now = Date.now(), dt = Math.min(0.05, (this.dt || 16.7) / 1000);
+    if (!this.car) this.car = { pos: this.selectedHead, target: this.selectedHead };
+    var c = this.car;
+    c.pos += (c.target - c.pos) * (1 - Math.exp(-9 * dt));
+    if (Math.abs(c.target - c.pos) < 0.002) c.pos = c.target;
+    var settled = Math.abs(c.target - c.pos) < 0.08;
+    var mod = function (k) { return ((k % N) + N) % N; };
+    var size = H * 0.4, gap = W / 2 + size / 2 + 40, cy = H * 0.46, R = size / 2;
+    this.text('Choose your skull', W / 2, H * 0.1, H * 0.07);
+    for (var k = Math.floor(c.pos) - 1; k <= Math.floor(c.pos) + 2; k++) {
+      var d = (k - c.pos) * gap;
+      if (Math.abs(d) > W / 2 + size) continue;
+      var idx = mod(k), img = this.avatarUnlocked[idx] ? a.heads[idx] : this.dark(idx);
+      DS2.drawSkull(ctx, img, W / 2 + d, cy, size, d / R, now);
+    }
+    var cur = mod(c.target), cost = this.avatarCost(cur), owned = this.avatarUnlocked[cur];
+    this.text((cur + 1) + ' / ' + N, W / 2, H * 0.74, H * 0.045);
+    var label = owned ? (cur === this.selectedHead ? 'SELECTED' : 'SELECT') : 'BUY  ' + cost;
+    var act = function () {
+      if (!settled) return;
+      if (self.avatarUnlocked[cur]) { self.selectedHead = cur; self.save(); DS2.Audio.play('reload'); }
+      else if (self.coins >= cost) { self.coins -= cost; self.avatarUnlocked[cur] = true; self.selectedHead = cur; self.save(); DS2.Audio.play('gotcoin'); }
+    };
+    this.btn({ x: W / 2 - W * 0.12, y: H * 0.8, w: W * 0.24, h: H * 0.11 }, label, act, { disabled: !settled || (!owned && this.coins < cost) || (owned && cur === this.selectedHead), fs: 0.4 });
+    this.buttons.push({ r: { x: W / 2 - size / 2, y: cy - size / 2, w: size, h: size }, cb: act, key: 'carc' });
+    var as = H * 0.16;
+    this.arrowBtn(W * 0.1, cy, as, -1, function () { c.target += 1; DS2.Audio.play('reload'); });
+    this.arrowBtn(W * 0.9, cy, as, 1, function () { c.target -= 1; DS2.Audio.play('reload'); });
   };
 
   U.drawInfo = function () {
@@ -212,7 +241,8 @@
     DS2.Audio.musicVol = Math.max(0, Math.min(1, (x - tr.x) / tr.w)); DS2.Audio.applyMusic();
   };
 
-  U.draw = function () {
+  U.draw = function (dtMs) {
+    this.dt = dtMs;
     this.buttons = [];
     switch (this.state) {
       case S.LOADING: this.drawLoading(); break;

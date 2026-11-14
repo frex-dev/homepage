@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<map version="1.10" tiledversion="1.9.1" orientation="orthogonal" renderorder="right-down" width="40" height="25" tilewidth="64" tileheight="64" nextlayerid="4" nextobjectid="9">
+  <properties>
+    <property name="sw1" value="128" />
+    <property name="sw2" value="111" />
+    <property name="sw3" value="110" />
+    <property name="sw4" value="109" />
+    <property name="sw5" value="126" />
+    <property name="sw6" value="21" />
+  </properties>
+  <tileset firstgid="1" name="tile64_new" margin="2" spacing="2" columns="15" tilecount="225" tileheight="64" tilewidth="64">
+    <image source="tile64_new.png" width="992" height="992" />
+  </tileset>
+  <layer id="2" name="tilebg" width="40" height="25">
+    <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAA/+3DMQ0AAAwDoHqrf0995mEPJCQAAABA75cBDzbIDaAPAAA=
+  </data>
+  </layer>
+  <layer id="1" name="tile" width="40" height="25">
+    <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAA/+2SPQrCQBBG9xT+IQopVNCIkBQBbVRQC8HGzjZiIXiGeAqv67c4gTE4cQO73Tx45IdN8tiJMYqiKIqiKIoShh3cw0ODZ3LYD5PzxRBO4QzGcO74XAFvAZsiajnCBKZ0PDm+o6D1gwB9XbiBPbo+07eWP9ZKsy/7fO4h3zeO7V0L66XZl30X8/kXr8I3Xw2aqvv2j7rZ876EtJ0dOIJjOIEt2Kb7mYemKtLsbd+KtXH5/ZSdLzw1caTZ3+Gzxgetsx1bdvTR5MIbCzgaPaAPAAA=
+  </data>
+  </layer>
+  <objectgroup id="3" name="objects">
+    <object name="coin" id="1" x="664" y="1259">
+      <point />
+    </object>
+    <object name="flagBlue" id="2" x="33.956238" y="1062.985">
+      <point />
+    </object>
+    <object name="flagOrange" id="3" x="2271" y="1262">
+      <point />
+    </object>
+    <object name="coin" id="4" x="1052" y="1322">
+      <point />
+    </object>
+    <object id="5" x="1246" y="1293">
+      <point />
+    </object>
+    <object id="6" x="1434" y="1222">
+      <point />
+    </object>
+    <object id="7" x="1566" y="1086">
+      <point />
+    </object>
+    <object name="coin" id="8" x="1819" y="1006">
+      <point />
+    </object>
+  </objectgroup>
+</map>

@@ -1,6 +1,6 @@
 
-/* Physics, pixel-mask collision queries, camera and render interpolation.
-   Physics advances at 120 Hz; rendering follows the display refresh rate.
+/* Doodle Skulls 2 — Physics, pixel-mask collision,
+   slope movement, wall rolling, camera and interpolation.
 */
 (function (root) {
   'use strict';
@@ -12,28 +12,36 @@
   var K = {
     TILE: 64,
     ZOOM: 1.9,
+
     GRAVITY: 1500,
     MAX_FALL: 900,
+
     MAX_RUN_SPEED: 360,
     GROUND_ACCEL: 2800,
     GROUND_DECEL: 4500,
     GROUND_FRICT: 3,
+
     AIR_ACCEL: 700,
     AIR_DRAG: 1.2,
+
     JUMP_FORCE: -660,
     JUMP_CD_MS: 850,
     COYOTE_MS: 150,
+
     SLOPE_GRAV_SCALE: 0.4,
     UPHILL_ASSIST: 4000,
+
     INTRO_DUR: 1.8,
+
     HEAD_RADIUS: 33,
-    HEAD_VISUAL_RADIUS: 43,
+    HEAD_VISUAL_RADIUS: 39,
+
     VIEW_ZOOM: 1.15,
     CAM_INTRO: 0,
     CAM_PLAY: 1,
     CAM_OUTRO: 2,
 
-    FAITHFUL_LEFT_UPHILL_QUIRK: true,
+    FAITHFUL_LEFT_UPHILL_QUIRK: false,
     FIX_JUMP_CANCEL: true,
 
     PHYSICS_HZ: 120,
@@ -77,6 +85,8 @@
 
   var P = World.prototype;
 
+  /* ---------- reset ---------- */
+
   P.reset = function (initial) {
     this.coinsCollected = 0;
     this.levelComplete = false;
@@ -110,6 +120,7 @@
     this.prevHeadX = this.headX;
     this.prevHeadY = this.headY;
     this.prevRollDraw = this.rollDraw;
+
     this.renderHeadX = this.headX;
     this.renderHeadY = this.headY;
     this.renderRoll = this.rollDraw;
@@ -117,6 +128,7 @@
     this.headVX = 0;
     this.headVY = 0;
     this.onGround = false;
+    this.wallBlocked = false;
 
     this.jumpCooldown = 0;
     this.jumpCoyoteMs = K.COYOTE_MS;
@@ -142,6 +154,7 @@
     this.prevHeadX = this.headX;
     this.prevHeadY = this.headY;
     this.prevRollDraw = 0;
+
     this.renderHeadX = this.headX;
     this.renderHeadY = this.headY;
     this.renderRoll = 0;
@@ -149,6 +162,7 @@
     this.headVX = 0;
     this.headVY = 0;
     this.onGround = false;
+    this.wallBlocked = false;
 
     this.jumpCooldown = 0;
     this.jumpCoyoteMs = 0;
@@ -212,6 +226,7 @@
     if (maxY === undefined) maxY = feet + 400;
 
     var col = Math.floor(x / K.TILE);
+
     if (col < 0 || col >= this.cols) return NaN;
 
     var bestY = NaN;
@@ -221,11 +236,9 @@
     var to = Math.ceil(maxY);
 
     for (var y = from; y <= to; y++) {
-      var solid = this.isBlockingAtWorld(x, y);
+      if (!this.isBlockingAtWorld(x, y)) continue;
 
-      if (!solid) continue;
-
-      // Only accept the top boundary of a solid surface.
+      // Accept only the top boundary of a solid surface.
       if (this.isBlockingAtWorld(x, y - 1)) continue;
 
       if (!nearest) return y;
@@ -260,7 +273,7 @@
   /* ---------- horizontal collision ---------- */
 
   P.resolveX = function () {
-    if (Math.abs(this.headVX) < 0.1) return;
+    if (Math.abs(this.headVX) < 0.1) return false;
 
     var radius = this.headRadius;
     var movingRight = this.headVX > 0;
@@ -289,18 +302,22 @@
         : (col + 1) * K.TILE + radius;
 
       this.headVX = 0;
+      return true;
     }
+
+    return false;
   };
 
   /* ---------- vertical collision ---------- */
 
   P.resolveY = function () {
     // Ground collisions are handled by stickToSurface().
-    // Here we only resolve upward movement into a ceiling.
+    // This handles upward movement into ceilings.
     if (this.headVY >= 0) return;
 
     var radius = this.headRadius;
     var top = this.headY - radius;
+
     var points = [
       this.headX - radius * 0.65,
       this.headX,
@@ -313,11 +330,13 @@
     for (var i = 0; i < points.length; i++) {
       if (!this.isBlockingAtWorld(points[i], top)) continue;
 
-      // Find the first empty pixel below the solid ceiling at this x.
       var y = Math.floor(top);
       var limit = y + maxScan;
 
-      while (y <= limit && this.isBlockingAtWorld(points[i], y)) {
+      while (
+        y <= limit &&
+        this.isBlockingAtWorld(points[i], y)
+      ) {
         y++;
       }
 
@@ -332,7 +351,8 @@
     }
   };
 
-  /* Stable ground following uses the skull's circular footprint. */
+  /* ---------- stable ground following ---------- */
+
   P.stickToSurface = function (dt) {
     if (K.FIX_JUMP_CANCEL && this.jumpLock) {
       if (this.headVY < 0) return;
@@ -341,11 +361,12 @@
 
     var radius = this.headRadius;
     var feet = this.headY + radius;
+
     var samples = 9;
     var targetY = Infinity;
     var found = false;
 
-    // The smallest candidate is the highest support constraint.
+    // Use the whole circular footprint to follow slopes.
     for (var i = 0; i < samples; i++) {
       var dx = -radius * 0.85 +
         (radius * 1.7) * i / (samples - 1);
@@ -365,7 +386,10 @@
 
       var candidate = surface - arc;
 
-      if (candidate < targetY) targetY = candidate;
+      if (candidate < targetY) {
+        targetY = candidate;
+      }
+
       found = true;
     }
 
@@ -375,12 +399,13 @@
     }
 
     var difference = targetY - this.headY;
+
     var allowedDown = Math.max(
       12,
       Math.abs(this.headVY) * dt + 4
     );
 
-    // Do not snap across a gap or teleport up onto a distant ledge.
+    // Avoid snapping across gaps or onto distant ledges.
     if (difference > allowedDown || difference < -14) {
       this.onGround = false;
       return;
@@ -537,7 +562,8 @@
 
     this.jumpPressed = false;
 
-    /* Ground movement and slope following. */
+    /* ---------- ground movement and slopes ---------- */
+
     if (this.onGround) {
       var radius = this.headRadius * 0.95;
       var feet = this.headY + this.headRadius;
@@ -584,6 +610,7 @@
         var slopeAcc =
           K.GRAVITY * ty * K.SLOPE_GRAV_SCALE;
 
+        // Reduce gravity resistance while actively climbing.
         if (
           move !== 0 &&
           sign(move) * sign(slopeAcc) < 0
@@ -602,14 +629,14 @@
 
           vAlong += acc * move * dt;
 
+          // Uphill assist to the right.
           if (ty < -0.025 && move > 0) {
             vAlong += K.UPHILL_ASSIST * dt;
           }
 
+          // Uphill assist to the left.
           if (ty > 0.025 && move < 0) {
-            vAlong +=
-              (K.FAITHFUL_LEFT_UPHILL_QUIRK ? 1 : -1) *
-              K.UPHILL_ASSIST * dt;
+            vAlong -= K.UPHILL_ASSIST * dt;
           }
 
         } else {
@@ -626,7 +653,8 @@
       }
     }
 
-    /* Air movement. */
+    /* ---------- air movement ---------- */
+
     if (!this.onGround) {
       if (!jumped) {
         this.headVY += K.GRAVITY * dt;
@@ -648,10 +676,13 @@
       }
     }
 
-    /* Integrate movement and resolve collisions. */
+    /* ---------- movement and collisions ---------- */
+
+    var attemptedVX = this.headVX;
+
     this.headX += this.headVX * dt;
 
-    this.resolveX();
+    this.wallBlocked = this.resolveX();
 
     this.headY += this.headVY * dt;
 
@@ -664,15 +695,30 @@
       this.events.push('land');
     }
 
-    /* Rolling animation. */
-    var speed = Math.sqrt(
-      this.headVX * this.headVX +
-      this.headVY * this.headVY
-    );
+    /* ---------- rolling animation ---------- */
+
+    var speed;
+
+    if (this.wallBlocked && move !== 0) {
+      // Keep rolling visually while pushing against a wall.
+      speed = Math.min(
+        K.MAX_RUN_SPEED,
+        Math.abs(attemptedVX)
+      );
+    } else {
+      speed = Math.sqrt(
+        this.headVX * this.headVX +
+        this.headVY * this.headVY
+      );
+    }
+
+    var rollDirection = this.wallBlocked && move !== 0
+      ? sign(move)
+      : (this.headVX >= 0 ? 1 : -1);
 
     this.rollAngle +=
       (speed * dt / this.headRadius * 57.29578) *
-      (this.headVX >= 0 ? 1 : -1);
+      rollDirection;
 
     var lerp = Math.min(1, 32 * dt);
 
@@ -685,7 +731,8 @@
     this.rollDraw +=
       (this.rollAngle - this.rollDraw) * lerp;
 
-    /* World boundaries. */
+    /* ---------- world boundaries ---------- */
+
     var maxX = this.cols * K.TILE;
 
     if (this.headX - this.headRadius < 0) {
@@ -703,7 +750,8 @@
       this.respawn();
     }
 
-    /* Coins. */
+    /* ---------- coins ---------- */
+
     var coinRadius = this.headRadius + 24;
     var coinRadius2 = coinRadius * coinRadius;
 
@@ -743,7 +791,8 @@
 
     this.updateCamera(dt);
 
-    /* Level completion. */
+    /* ---------- level completion ---------- */
+
     if (!this.levelComplete) {
       var fx = this.headX - this.flagOrangeX;
       var fy = this.headY - this.flagOrangeY;
@@ -760,7 +809,8 @@
     }
   };
 
-  /* Frame-rate-independent update. */
+  /* ---------- frame-rate-independent update ---------- */
+
   P.update = function (dtMs) {
     if (this.paused) {
       this.physicsAccumulator = 0;
@@ -792,21 +842,25 @@
       }
     }
 
-    // Prevent an excessive backlog after a long frame.
+    // Prevent excessive backlog after a long frame.
     if (steps >= K.MAX_SUBSTEPS) {
       this.physicsAccumulator = 0;
     }
 
-    var alpha = this.physicsAccumulator / K.PHYSICS_STEP;
+    var alpha =
+      this.physicsAccumulator / K.PHYSICS_STEP;
 
     this.renderHeadX =
-      this.prevHeadX + (this.headX - this.prevHeadX) * alpha;
+      this.prevHeadX +
+      (this.headX - this.prevHeadX) * alpha;
 
     this.renderHeadY =
-      this.prevHeadY + (this.headY - this.prevHeadY) * alpha;
+      this.prevHeadY +
+      (this.headY - this.prevHeadY) * alpha;
 
     this.renderRoll =
-      this.prevRollDraw + (this.rollDraw - this.prevRollDraw) * alpha;
+      this.prevRollDraw +
+      (this.rollDraw - this.prevRollDraw) * alpha;
   };
 
   DS2.K = K;

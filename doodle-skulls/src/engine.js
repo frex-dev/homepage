@@ -10,7 +10,7 @@
     TILE: 64, ZOOM: 1.9, GRAVITY: 1500, MAX_FALL: 900, MAX_RUN_SPEED: 360,
     GROUND_ACCEL: 2800, GROUND_DECEL: 4500, GROUND_FRICT: 3, AIR_ACCEL: 700, AIR_DRAG: 1.2,
     JUMP_FORCE: -660, JUMP_CD_MS: 850, COYOTE_MS: 150, SLOPE_GRAV_SCALE: 0.4, UPHILL_ASSIST: 4000,
-    INTRO_DUR: 1.8, HEAD_RADIUS: 33, CAM_INTRO: 0, CAM_PLAY: 1, CAM_OUTRO: 2,
+    INTRO_DUR: 1.8, HEAD_RADIUS: 33, HEAD_VISUAL_RADIUS: 43, VIEW_ZOOM: 1.15, CAM_INTRO: 0, CAM_PLAY: 1, CAM_OUTRO: 2,
     /* The original adds +4000 (not -4000) when walking uphill to the left. Kept for fidelity. */
     FAITHFUL_LEFT_UPHILL_QUIRK: true,
     /* Original stickToSurface() re-grounds the player on the frame after a jump at >=~30fps (rise < 18px/frame),
@@ -31,6 +31,7 @@
     this.flagBlueX = level.flagBlue.x; this.flagBlueY = level.flagBlue.y;
     this.flagOrangeX = level.flagOrange.x; this.flagOrangeY = level.flagOrange.y;
     this.headRadius = K.HEAD_RADIUS;
+    this.visualRadius = K.HEAD_VISUAL_RADIUS;
     this.screenW = 1280; this.screenH = 720; this.zoom = K.ZOOM;
     this.events = [];          /* 'land','jump','coin','death','checkpoint','complete' */
     this.reset(true);

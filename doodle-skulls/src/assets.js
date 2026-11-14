@@ -90,6 +90,7 @@
     init: function () {
       var AC = root.AudioContext || root.webkitAudioContext;
       if (AC && !this.ctx) { try { this.ctx = new AC(); } catch (e) { this.ctx = null; } }
+      this.loadMusic();
     },
     loadSfx: function (name) {
       var self = this, key = name;
@@ -106,23 +107,41 @@
       } catch (e) { /* ignore */ }
     },
     playDeath: function () { this.play('death' + (1 + Math.floor(Math.random() * 5))); },
-    startMusic: function () {
-      if (!this.music) {
-        this.music = new root.Audio(BASE + 'wellerman.mp3'); this.music.loop = true; this.music.preload = 'auto';
-      }
-      this.applyMusic();
+    loadMusic: function () {
+      var self = this;
+      if (!this.ctx || this.musicLoading) return;
+      this.musicLoading = true;
+      fetch(BASE + 'wellerman.mp3').then(function (r) {
+        if (!r.ok) throw new Error('wellerman.mp3 HTTP ' + r.status + ' (expected at ' + BASE + 'wellerman.mp3)');
+        return r.arrayBuffer();
+      }).then(function (ab) {
+        return new Promise(function (res, rej) { self.ctx.decodeAudioData(ab, res, rej); });
+      }).then(function (buf) { self.musicBuf = buf; self.applyMusic(); })
+        .catch(function (err) { console.warn('music (WebAudio) failed:', err); self.useElement = true; self.applyMusic(); });
     },
+    startMusic: function () { this.applyMusic(); },
     applyMusic: function () {
-      if (!this.music) return;
-      this.music.volume = Math.max(0, Math.min(1, this.musicVol));
-      if (this.musicOn && this.unlocked) { var p = this.music.play(); if (p && p.catch) p.catch(function () {}); }
-      else this.music.pause();
+      var v = Math.max(0, Math.min(1, this.musicVol)), want = this.musicOn && this.unlocked;
+      if (this.musicBuf && this.ctx) {
+        if (!this.gain) { this.gain = this.ctx.createGain(); this.gain.connect(this.ctx.destination); }
+        this.gain.gain.value = v;
+        if (want && !this.musicSrc) {
+          var s = this.ctx.createBufferSource(); s.buffer = this.musicBuf; s.loop = true; s.connect(this.gain); s.start(0); this.musicSrc = s;
+        } else if (!want && this.musicSrc) { try { this.musicSrc.stop(); } catch (e) { /* already stopped */ } this.musicSrc = null; }
+        return;
+      }
+      if (this.useElement || !this.ctx) {
+        if (!this.music) { this.music = new root.Audio(BASE + 'wellerman.mp3'); this.music.loop = true; this.music.preload = 'auto'; }
+        this.music.volume = v;
+        if (want) { var p = this.music.play(); if (p && p.catch) p.catch(function (err) { console.warn('music element failed:', err); }); }
+        else this.music.pause();
+      }
     },
     unlock: function () {
       if (this.unlocked) return;
       this.unlocked = true;
       if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
-      this.startMusic();
+      this.applyMusic();
     }
   };
 

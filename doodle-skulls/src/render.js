@@ -18,6 +18,19 @@
     return null;
   }
 
+  function drawSkull(ctx, img, cx, cy, box, angle, now) {
+    var b = Math.sin(now / 1000 * Math.PI * 2 / 3.2);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1 - 0.018 * b, 1 + 0.035 * b);
+    ctx.rotate(angle);
+    if (img) {
+      var s = box / Math.max(img.width, img.height), w = img.width * s, h = img.height * s;
+      ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    } else { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, box / 2, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
+  }
+
   function Renderer(canvas) {
     this.canvas = canvas; this.ctx = canvas.getContext('2d');
     this.k = 1;            /* device px per logical px */
@@ -36,7 +49,7 @@
     this.H = 720; this.W = this.canvas.width / this.k;
   };
 
-  R.zoom = function () { return DS2.K.ZOOM * (this.H / 1080); };
+  R.zoom = function () { return DS2.K.ZOOM * DS2.K.VIEW_ZOOM * (this.H / 1080); };
 
   R.buildCache = function (level) {
     var n = level.cols * level.rows;
@@ -89,17 +102,7 @@
       });
     }
 
-    ctx.save();
-    ctx.translate(world.headDrawX, world.headDrawY);
-    ctx.rotate(world.rollDraw * Math.PI / 180);
-    ctx.beginPath(); ctx.arc(0, 0, world.headRadius, 0, Math.PI * 2); ctx.closePath();
-    if (headImg) {
-      ctx.clip();
-      var sc = (world.headRadius * 2) / Math.min(headImg.width, headImg.height);
-      var w = headImg.width * sc, h = headImg.height * sc;
-      ctx.drawImage(headImg, -w / 2, -h / 2, w, h);
-    } else { ctx.fillStyle = '#fff'; ctx.fill(); }
-    ctx.restore();
+    drawSkull(ctx, headImg, world.headDrawX, world.headDrawY, world.visualRadius * 2, world.rollDraw * Math.PI / 180, now);
 
     ctx.setTransform(k, 0, 0, k, 0, 0);
     this.drawHUD(world, assets, z, halfW, halfH);
@@ -186,4 +189,5 @@
   };
 
   DS2.Renderer = Renderer;
+  DS2.drawSkull = drawSkull;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,6 +1,6 @@
 
-/* Physics, collision queries and camera.
-   Improved fixed-timestep physics and direct collision-height sampling.
+/* Physics, pixel-mask collision queries, camera and render interpolation.
+   Physics advances at 120 Hz; rendering follows the display refresh rate.
 */
 (function (root) {
   'use strict';
@@ -107,6 +107,13 @@
     this.headDrawY = this.headY;
     this.rollDraw = this.rollAngle;
 
+    this.prevHeadX = this.headX;
+    this.prevHeadY = this.headY;
+    this.prevRollDraw = this.rollDraw;
+    this.renderHeadX = this.headX;
+    this.renderHeadY = this.headY;
+    this.renderRoll = this.rollDraw;
+
     this.headVX = 0;
     this.headVY = 0;
     this.onGround = false;
@@ -131,6 +138,13 @@
 
     this.headDrawX = this.headX;
     this.headDrawY = this.headY;
+
+    this.prevHeadX = this.headX;
+    this.prevHeadY = this.headY;
+    this.prevRollDraw = 0;
+    this.renderHeadX = this.headX;
+    this.renderHeadY = this.headY;
+    this.renderRoll = 0;
 
     this.headVX = 0;
     this.headVY = 0;
@@ -189,69 +203,38 @@
     return Col.isSolid(local, lx, ly);
   };
 
-  /*
-   * Direct surface lookup.
-   *
-   * Instead of checking world pixels in 3px increments, this reads
-   * the collision tile's precomputed column height directly.
-   *
-   * nearest=true selects the surface nearest the player's feet.
-   */
+  /* ---------- surface lookup ---------- */
+
   P.findSurfaceY = function (x, minY, maxY, nearest) {
     var feet = this.headY + this.headRadius;
 
     if (minY === undefined) minY = feet - 8;
-    if (maxY === undefined) maxY = minY + 400;
+    if (maxY === undefined) maxY = feet + 400;
 
     var col = Math.floor(x / K.TILE);
-
     if (col < 0 || col >= this.cols) return NaN;
-
-    var localX = clampI(
-      Math.floor(x - col * K.TILE),
-      0,
-      63
-    );
-
-    var startRow = Math.max(
-      0,
-      Math.floor(minY / K.TILE) - 1
-    );
-
-    var endRow = Math.min(
-      this.rows - 1,
-      Math.floor(maxY / K.TILE)
-    );
 
     var bestY = NaN;
     var bestDistance = Infinity;
 
-    for (var row = startRow; row <= endRow; row++) {
-      var gid = this.tileLayer[row * this.cols + col];
+    var from = Math.floor(minY);
+    var to = Math.ceil(maxY);
 
-      if (gid <= 0) continue;
+    for (var y = from; y <= to; y++) {
+      var solid = this.isBlockingAtWorld(x, y);
 
-      var local = gid - this.firstGid;
+      if (!solid) continue;
 
-      if (local < 0 || !Col.hasCollision(local)) continue;
+      // Only accept the top boundary of a solid surface.
+      if (this.isBlockingAtWorld(x, y - 1)) continue;
 
-      var surfaceRow = Col.getSurfaceRow(local, localX);
+      if (!nearest) return y;
 
-      if (surfaceRow >= K.TILE) continue;
-
-      var surfaceY = row * K.TILE + surfaceRow;
-
-      if (surfaceY < minY || surfaceY > maxY) continue;
-
-      if (!nearest) {
-        return surfaceY;
-      }
-
-      var distance = Math.abs(surfaceY - feet);
+      var distance = Math.abs(y - feet);
 
       if (distance < bestDistance) {
         bestDistance = distance;
-        bestY = surfaceY;
+        bestY = y;
       }
     }
 
@@ -312,93 +295,98 @@
   /* ---------- vertical collision ---------- */
 
   P.resolveY = function () {
+    // Ground collisions are handled by stickToSurface().
+    // Here we only resolve upward movement into a ceiling.
+    if (this.headVY >= 0) return;
+
     var radius = this.headRadius;
+    var top = this.headY - radius;
+    var points = [
+      this.headX - radius * 0.65,
+      this.headX,
+      this.headX + radius * 0.65
+    ];
 
-    var c0 = clampI(
-      Math.floor((this.headX - radius + 6) / K.TILE),
-      0,
-      this.cols - 1
-    );
+    var resolvedBottom = -Infinity;
+    var maxScan = Math.ceil(radius * 2 + K.TILE);
 
-    var c1 = clampI(
-      Math.floor((this.headX + radius - 6) / K.TILE),
-      0,
-      this.cols - 1
-    );
+    for (var i = 0; i < points.length; i++) {
+      if (!this.isBlockingAtWorld(points[i], top)) continue;
 
-    if (this.headVY >= 0) {
-      var feet = this.headY + radius;
+      // Find the first empty pixel below the solid ceiling at this x.
+      var y = Math.floor(top);
+      var limit = y + maxScan;
 
-      for (var c = c0; c <= c1; c++) {
-        var ox = this.overlapX(c);
-
-        if (isNaN(ox)) continue;
-
-        if (this.isBlockingAtWorld(ox, feet)) {
-          var sy = this.findSurfaceY(
-            ox,
-            feet - 8,
-            feet + 16,
-            true
-          );
-
-          if (!isNaN(sy)) {
-            this.headY = sy - radius - 0.5;
-            this.headVY = 0;
-            this.onGround = true;
-            return;
-          }
-        }
+      while (y <= limit && this.isBlockingAtWorld(points[i], y)) {
+        y++;
       }
-    } else {
-      for (var c2 = c0; c2 <= c1; c2++) {
-        var ox2 = this.overlapX(c2);
 
-        if (isNaN(ox2)) continue;
-
-        if (this.isBlockingAtWorld(ox2, this.headY - radius)) {
-          var rowTop = Math.floor(
-            (this.headY - radius) / K.TILE
-          );
-
-          this.headY = (rowTop + 1) * K.TILE + radius;
-          this.headVY = 0;
-          return;
-        }
+      if (y <= limit && y > resolvedBottom) {
+        resolvedBottom = y;
       }
+    }
+
+    if (resolvedBottom !== -Infinity) {
+      this.headY = resolvedBottom + radius + 0.5;
+      this.headVY = 0;
     }
   };
 
-  /*
-   * Stable ground following.
-   * Once the feet are close to a surface, align directly instead of
-   * repeatedly interpolating toward it and allowing vertical vibration.
-   */
+  /* Stable ground following uses the skull's circular footprint. */
   P.stickToSurface = function (dt) {
     if (K.FIX_JUMP_CANCEL && this.jumpLock) {
       if (this.headVY < 0) return;
       this.jumpLock = false;
     }
 
-    var feet = this.headY + this.headRadius;
+    var radius = this.headRadius;
+    var feet = this.headY + radius;
+    var samples = 9;
+    var targetY = Infinity;
+    var found = false;
 
-    var sy = this.findSurfaceY(
-      this.headX,
-      feet - 24,
-      feet + 42,
-      true
-    );
+    // The smallest candidate is the highest support constraint.
+    for (var i = 0; i < samples; i++) {
+      var dx = -radius * 0.85 +
+        (radius * 1.7) * i / (samples - 1);
 
-    if (isNaN(sy)) return;
+      var surface = this.findSurfaceY(
+        this.headX + dx,
+        feet - 24,
+        feet + 48,
+        true
+      );
 
-    var targetY = sy - this.headRadius - 0.5;
+      if (isNaN(surface)) continue;
 
-    this.headY = targetY;
+      var arc = Math.sqrt(
+        Math.max(0, radius * radius - dx * dx)
+      );
 
-    if (this.headVY > 0) {
-      this.headVY = 0;
+      var candidate = surface - arc;
+
+      if (candidate < targetY) targetY = candidate;
+      found = true;
     }
 
+    if (!found) {
+      this.onGround = false;
+      return;
+    }
+
+    var difference = targetY - this.headY;
+    var allowedDown = Math.max(
+      12,
+      Math.abs(this.headVY) * dt + 4
+    );
+
+    // Do not snap across a gap or teleport up onto a distant ledge.
+    if (difference > allowedDown || difference < -14) {
+      this.onGround = false;
+      return;
+    }
+
+    this.headY = targetY;
     this.onGround = true;
   };
 
@@ -491,6 +479,10 @@
 
   P.step = function (dtMs) {
     if (this.paused) return;
+
+    this.prevHeadX = this.headX;
+    this.prevHeadY = this.headY;
+    this.prevRollDraw = this.rollDraw;
 
     if (this.levelComplete) {
       this.levelCompleteTimer += dtMs / 1000;
@@ -768,11 +760,7 @@
     }
   };
 
-  /*
-   * Frame-rate-independent update.
-   * Rendering can run at 30, 60, 90 or 120 FPS while physics
-   * consistently advances in 1/120-second steps.
-   */
+  /* Frame-rate-independent update. */
   P.update = function (dtMs) {
     if (this.paused) {
       this.physicsAccumulator = 0;
@@ -808,6 +796,17 @@
     if (steps >= K.MAX_SUBSTEPS) {
       this.physicsAccumulator = 0;
     }
+
+    var alpha = this.physicsAccumulator / K.PHYSICS_STEP;
+
+    this.renderHeadX =
+      this.prevHeadX + (this.headX - this.prevHeadX) * alpha;
+
+    this.renderHeadY =
+      this.prevHeadY + (this.headY - this.prevHeadY) * alpha;
+
+    this.renderRoll =
+      this.prevRollDraw + (this.rollDraw - this.prevRollDraw) * alpha;
   };
 
   DS2.K = K;

@@ -399,18 +399,7 @@ const WEAPONS=['riot','smaw','machete','mp5','tavor','ak47','m93ba','uzi','shotg
 const SPRITES=['bushPalm','palmTree','flagStationOrange','flagStationBlue','obelisk','fanTree','everTree','bushLeaf'];
 const spriteImageCache = {};
 
-function getSpriteImage(spriteName) {
-  if (!spriteName) return null;
-
-  if (!spriteImageCache[spriteName]) {
-    const img = new Image();
-    img.src = `./${spriteName}.png`;
-    spriteImageCache[spriteName] = img;
-  }
-
-  const img = spriteImageCache[spriteName];
-  return img.complete && img.naturalWidth > 0 ? img : null;
-}
+function getSpriteImage(spriteName){if(!spriteName)return null;if(!spriteImageCache[spriteName]){const img=new Image();img.onload=()=>draw();img.onerror=()=>console.warn('Missing sprite:',spriteName);img.src=`./${spriteName}.png`;spriteImageCache[spriteName]=img;}const img=spriteImageCache[spriteName];return img.complete&&img.naturalWidth>0?img:null;}
 const layerNames=['tilebg','tile','objects'];
 const state={w:16,h:9,tw:64,th:64,activeLayer:'tile',view:'all',tool:'paint',zoom:1,showGrid:true,showVisuals:false,selectedTile:1,atlasName:'Jungle',atlas:null,atlasCols:15,atlasRows:15,atlasCount:225,background:'bgJungle.png',objects:[],selectedObjectId:null,history:[],future:[],space:false,dragging:false,lastCell:null,projectName:'UNTITLED',author:'MMC Studio',revision:1,version:'1.0.0',panStart:null,gesture:null,objectMode:'add',editingId:null,selection:null,selectStart:null,tileClipboard:null,atlasSelection:null,atlasDragStart:null,pasteAt:null};
 let layers={tilebg:new Int32Array(144),tile:new Int32Array(144)};let recentTiles=[];let atlasImages={};let mapCanvas=$('mapCanvas'),mapCtx=mapCanvas.getContext('2d');let dirty=false;

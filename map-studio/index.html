@@ -366,6 +366,17 @@ main{grid-template-columns:minmax(0,1fr) 350px;height:calc(100vh - 78px);min-hei
 #exportBtn:hover, #saveProgressBtn:hover { border-color:var(--green) !important; }
 #exportBtn *, #saveProgressBtn * { font-weight:400 !important; }
 #layerList .layerrow, #layerList .layerrow .layername { font-weight:400 !important; }
+#coordLabel {
+  width: 190px;
+  min-width: 190px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 </style>
 </head>
 <body>
@@ -568,7 +579,7 @@ function getFillZoom(){
     3
   );
 }
-function updateScrollbarsInfo(){const vp=$('mapViewport');$('zoomLabel').textContent =   Math.round((state.zoom / getFillZoom()) * 100) + '%';$('mapStats').textContent=`${state.w} × ${state.h} tiles · ${state.w*TILE} × ${state.h*TILE} px`;$('fileStats').textContent=dirty?'Unsaved changes':'100 KB map limit';$('activeLayerPill').textContent=state.activeLayer}
+function updateScrollbarsInfo(){const vp=$('mapViewport');$('zoomLabel').textContent =   Math.round((state.zoom / getFillZoom()) * 100) + '%';$('mapStats').textContent=`${state.w} × ${state.h} tiles · ${state.w*TILE} × ${state.h*TILE} px`;$('activeLayerPill').textContent=state.activeLayer}
 function updateCustomScrollbars(){const vp=$('mapViewport'),vr=$('verticalScrollRail'),vt=$('verticalScrollThumb'),hr=$('horizontalScrollRail'),ht=$('horizontalScrollThumb'),shell=$('mapScrollShell');if(!vp||!vr||!vt||!hr||!ht||!shell)return;const maxX=Math.max(0,vp.scrollWidth-vp.clientWidth);shell.classList.toggle('no-horizontal-scroll',maxX<=1);const maxY=Math.max(0,vp.scrollHeight-vp.clientHeight),trackY=vr.clientHeight,thumbY=maxY>0?Math.min(trackY,Math.max(28,trackY*vp.clientHeight/Math.max(vp.scrollHeight,1))):trackY,topY=maxY>0?(vp.scrollTop/maxY)*Math.max(0,trackY-thumbY):0;vt.style.height=thumbY+'px';vt.style.top=topY+'px';vr.classList.toggle('no-overflow',maxY<=1);vr.setAttribute('aria-valuenow',String(maxY>0?Math.round(vp.scrollTop/maxY*100):0));const trackX=hr.clientWidth,thumbX=maxX>0?Math.min(trackX,Math.max(28,trackX*vp.clientWidth/Math.max(vp.scrollWidth,1))):trackX,leftX=maxX>0?(vp.scrollLeft/maxX)*Math.max(0,trackX-thumbX):0;ht.style.width=thumbX+'px';ht.style.left=leftX+'px';hr.classList.toggle('no-overflow',maxX<=1);hr.setAttribute('aria-valuenow',String(maxX>0?Math.round(vp.scrollLeft/maxX*100):0))}function updateStats(){updateScrollbarsInfo();updateCustomScrollbars();$('statusText').textContent=dirty?'Modified · save/export when ready':'Ready';}
 function fit(){const vp=$('mapViewport');const z=Math.min((vp.clientWidth-24)/(state.w*TILE),(vp.clientHeight-24)/(state.h*TILE),1);state.zoom=clamp(z,.08,3);canvasSize();vp.scrollLeft=Math.max(0,(vp.scrollWidth-vp.clientWidth)/2);vp.scrollTop=Math.max(0,(vp.scrollHeight-vp.clientHeight)/2);draw();drawAtlas()}
 function animateFit(duration = 700) {

@@ -122,6 +122,17 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MMC Map Studio - Mini Militia Classic Map Maker &amp; TMX Editor</title>
 <meta name="description" content="Create custom Mini Militia Classic maps with MMC Map Studio. Design tile-based maps, place objects and import or export TMX files with this free online map editor.">
+#coordLabel {
+  width: 190px;
+  min-width: 190px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 <style>
 :root{color-scheme:dark;--bg:#0b0f16;--panel:#131a25;--panel2:#192232;--line:#2a364a;--text:#e8eef8;--muted:#9aa9bf;--green:#78e3b7;--blue:#8ab4ff;--red:#ff818c;--gold:#ffd15c}
 .map-viewport.light-map{background:#878787;background-image:radial-gradient(#171717 1px,transparent 1px);background-size:18px 18px;scrollbar-color:#5e5a50 #a9a393}.map-viewport.light-map + .status{background:var(--panel);color:var(--muted)}
